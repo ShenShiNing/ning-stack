@@ -78,10 +78,11 @@ class Gate(unittest.TestCase):
     def tearDown(self):
         self.dir.cleanup()
 
-    def gate(self, answers, *extra, head=HEAD, finish="ready", policy=None, rules=None):
+    def gate(self, answers, *extra, head=HEAD, finish="ready", policy=None, rules=None, classic_checks=None):
         contexts = policy if policy is not None else []
         answers = [
-            checks("branches/main/protection", {"required_status_checks": {"contexts": contexts}}),
+            checks("branches/main/protection", {"required_status_checks": {
+                "contexts": contexts, "checks": classic_checks or []}}),
             checks("rules/branches/", [rules or []]),
             *answers,
         ]
@@ -123,6 +124,10 @@ class Gate(unittest.TestCase):
         rules = [{"type": "required_status_checks", "parameters": {
             "required_status_checks": [{"context": "never-reported"}]}}]
         self.fails([view(), required([row("build")]), view()], "never-reported", rules=rules)
+
+    def test_app_bound_requirement_is_not_lost_from_classic_policy(self):
+        self.fails([view(), required([row("build")]), view()], "never-reported",
+                   classic_checks=[{"context": "never-reported", "app_id": 42}])
 
     def test_allow_no_checks_cannot_waive_policy_access_errors(self):
         result, _ = self.gate([view(), required([]), view()], "--allow-no-checks")

@@ -76,6 +76,15 @@ def declared_checks(repo: str, branch: str) -> set[str]:
     if not isinstance(contexts, list) or not all(isinstance(c, str) and c for c in contexts):
         raise GateError("branch protection: missing required contexts")
     names = set(contexts)
+    if isinstance(policy, dict):
+        checks = policy.get("checks", [])
+        if not isinstance(checks, list):
+            raise GateError("branch protection: invalid check policy")
+        for check in checks:
+            context = check.get("context") if isinstance(check, dict) else None
+            if not isinstance(context, str) or not context:
+                raise GateError("branch protection: missing check context")
+            names.add(context)
     result = gh("api", "--method", "GET",
                 f"repos/{repo}/rules/branches/{quote(branch, safe='')}?per_page=100",
                 "--paginate", "--slurp")
