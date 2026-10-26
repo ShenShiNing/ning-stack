@@ -4,7 +4,7 @@ One request owner carries the finish line. One slice owner keeps a coherent chan
 
 ## Stage 0: Frame
 
-State acceptance, finish line, and risk in the existing progress note. A small task needs only a few lines. Split only if work is genuinely independent; name ownership, blocking steps, and shared state when a split is needed. Give each child a standalone brief: goal, owned paths, acceptance, proof, and report with evidence and head SHA.
+State acceptance, finish line, and risk in the existing progress note. A small task needs only a few lines. Split only if work is genuinely independent; name ownership, blocking steps, and shared state when a split is needed. Give each child a standalone brief: goal, owned paths, acceptance, finish line, PR policy and authorization limits, proof, and report with evidence and head SHA.
 
 **Finish line:** `local` = committed and reviewed; `ready` = PR passes its gate, left unmerged; `merged` = merged after the gate. User instructions win, then the project default, otherwise `ready`.
 
