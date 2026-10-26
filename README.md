@@ -1,42 +1,42 @@
 # ning-stack
 
-我的个人工程工作流，打包成一个 agent skill，Claude Code 和 Codex 都能用。和 tstack、pstack 一样，它写的是我自己的做事方式；方法大量取自 Matt Pocock 的 skills、pstack 和 tstack，按我的习惯改写、取舍后放在本仓库里。
+My personal software engineering workflow, packaged as one agent skill for Claude Code and Codex. It draws extensively from Matt Pocock's skills, Lauren Tan's pstack, and Theo Browne's tstack, adapted to how I work.
 
-English summary: my personal workflow as one agent skill, covering four flows (design, delivery, cleanup, optimization) and the specialist methods behind them. Methods are adapted from Matt Pocock's skills, pstack and tstack at pinned revisions (MIT, see `LICENSES/`).
+Build complex things as simply as possible. Keep one owner accountable, bring me consequential decisions, and prove the result on the real artifact.
 
-## 我的工作方式
+## How I work
 
-- 用尽量简单的方式做复杂的东西。
-- 每个结果只有一个 owner：接到请求的线程负责到终点线，一个实现者负责一段代码直到所有评审和 CI 修复做完。评审者独立、只读，每轮都是新任务。
-- 证据先于结论：先做能变红的复现，再修；结论都标明是实测、推断还是猜测。
-- 能观察到的事实由 agent 自己去查。只有影响产品、所有权或不可逆的决定才问我，并且一次问完、附上推荐答案。
-- 评审和 CI 并行：先做定向本地证明，开 ready PR，在同一个 head 上同时启动评审和 CI，修复按轮批量推送，最后在最新 head 上过合并门禁。
-- 验证深度看真实风险，不靠一套固定的全量流程。额外的测试、注释和抽象都要说得出当前的理由。
+- One request owner carries the work to its agreed finish line. One implementer owns each coherent slice through review and CI fixes.
+- Investigate observable facts before asking questions. Bring consequential product choices together, with a recommendation and its trade-offs.
+- Use the smallest design that meets the current need. Additional tests, comments, abstractions, and options must address a concrete risk or reduce existing complexity.
+- Run focused local checks, open a ready PR, and run independent review alongside CI. Batch fixes and evaluate the merge gate on the final commit.
+- Keep reviewers independent and read-only. Assess requirements and engineering standards separately.
+- Match verification to risk. Reuse evidence only while its assumptions remain valid.
 
-## 四条流程
+## Four flows
 
-| 流程 | 用途 | 文件 |
+| Flow | Purpose | Reference |
 | --- | --- | --- |
-| 设计 | 新能力：先读源码，按“前沿”分轮对齐决策，在模块缝上定形状，产物大小按执行需要来定 | `references/design.md` |
-| 交付 | 从请求走到 `local`、`ready` 或 `merged`：定框、接地、改动与证明、发布、评审与 CI 并行、修复循环、合并门禁 | `references/delivery.md` |
-| 清理 | 按成文标准去掉死代码、过时注释、多余测试，每项删除都要有证据 | `references/cleanup.md` |
-| 优化 | 重估逻辑与物理架构，按摩擦选点深挖；保留现状也是合法结论 | `references/optimization.md` |
+| Design | Understand the existing system, resolve consequential choices, shape the implementation, and agree on a brief or specification. | [Design](references/design.md) |
+| Delivery | Carry an agreed change through implementation, proof, independent review, and the requested finish line. | [Delivery](references/delivery.md) |
+| Cleanup | Remove debt, dead code, stale comments, and unnecessary tests against explicit standards, with evidence for each change. | [Cleanup](references/cleanup.md) |
+| Optimization | Reassess logical and physical architecture, including the premises behind earlier decisions. Keeping the current design is a valid outcome. | [Optimization](references/optimization.md) |
 
-## 短路径与专项方法
+## Load only what the task needs
 
-`SKILL.md` 只放共享规则和路由，每次只读命中的那个流程文件。专项方法只在触发条件满足时加载：
+`SKILL.md` contains shared rules and routing. An ordinary change loads the delivery flow; specialist methods are loaded when their conditions apply.
 
-- `references/methods/investigation.md`：how / why 溯源、诊断难缠的 bug、竞争设计、并行探索。
-- `references/methods/review.md`：单评审者的两轴评审、分级与账本、轮次预算；跨模型质询和 council 只在有争议或我要求时用。
-- `references/methods/evidence.md`：置信阶梯、按风险分级的证明、blast radius、证据复用、性能数字核查、验证工具。
-- `references/methods/continuity.md`：决策轨迹、长时间无人值守运行、暂停、接续、交接、接管、旧 PR 现代化、积压分诊。
-- `references/methods/learning.md`：同类错误结构化根治、retro、分阶段计时。
+- [Investigation](references/methods/investigation.md): understand behavior and rationale, diagnose difficult bugs, compare designs, and divide independent investigations.
+- [Review](references/methods/review.md): Spec and Standards assessments, findings ledgers, and bounded review rounds. Cross-model interrogation and council are available for consequential disputes or explicit requests.
+- [Evidence](references/methods/evidence.md): proof by risk, test quality, blast radius, evidence reuse, measurements, and reusable verification tools.
+- [Continuity](references/methods/continuity.md): decision trails, unattended work, pause and resume, handoffs, takeovers, old PRs, and backlogs.
+- [Learning](references/methods/learning.md): structural fixes for recurring mistakes, retrospectives, and stage timing.
 
-普通的小改动只会走 `SKILL.md` 加上交付流程这一条路，不会触发设计赛跑、多评审或长程规划。
+Small changes do not require competing designs, a review panel, or a long planning session.
 
-## 安装
+## Install
 
-把仓库放进 skill 目录即可，仓库根目录就是这个 skill：
+The repository root is the skill directory.
 
 ```bash
 # Claude Code
@@ -46,50 +46,56 @@ git clone https://github.com/ShenShiNing/ning-stack ~/.claude/skills/ning-stack
 git clone https://github.com/ShenShiNing/ning-stack "${CODEX_HOME:-$HOME/.codex}/skills/ning-stack"
 ```
 
-两边都要用的话，克隆一份，再从另一个目录做符号链接。skill 默认可以自动发现，也可以显式调用 `ning-stack`。
+To use both, keep one clone and link it into the other skill directory. Automatic discovery is enabled; you can also invoke `ning-stack` explicitly.
 
-## 在项目里使用
+## Use it in a project
 
-不需要先配置或激活。skill 会读取项目现有的 `AGENTS.md` / `CLAUDE.md`，以及它们指向的文档，从中拿产品和环境约束：checkout 与数据安全、设计权威、架构规则、检查命令、CI 和合并约定、模型分工。优先级从高到低是：harness 与工具规则、我对当前任务的明确指令、项目规则、ning-stack。遇到冲突时按项目规则办，并在报告里写明依据的是哪条。
+No setup or activation step is required. The skill reads the project's existing `AGENTS.md`, `CLAUDE.md`, and referenced instructions for product constraints, safe environments, design authority, architecture, commands, model roles, and merge requirements.
 
-项目可以在 `AGENTS.md` 里加一小段偏好，没有就用默认值。例如：
+The order of authority is: harness and tool rules, explicit instructions for the task, project rules, then ning-stack. If an existing project rule conflicts, follow it and identify the conflict. Replacing that rule is a deliberate project change.
+
+A project may add a short preferences section to `AGENTS.md`:
 
 ```markdown
 ## ning-stack
 - Default finish line: ready
-- Reviewer: a different model family from the implementer, medium effort
+- Reviewer: an independent model from a different family, medium effort
 - Focused checks: `npm test -- <files>`, `npm run typecheck`
-- Broad checks for wide changes: `npm run test:integration`
+- Broader checks for persistence changes: `npm run test:integration`
 ```
 
-真实项目的约束和偏好留在项目自己的仓库里，不放进本 skill。
+Keep project-specific constraints and operating procedures in the project.
 
-## 验证
+## Validate
 
-`scripts/trail.py` 是唯一的脚本：记录决策轨迹和分阶段计时（显式的 run、span 起止事件，span 可以重叠；报告给出活动墙钟时间，也就是各 span 的并集，以及会互相重叠的各阶段合计）。测试只用 Python 标准库：
+The only helper script, `scripts/trail.py`, records decision notes and explicit run/span timing. Spans can overlap. Its report distinguishes elapsed time, active wall time, and overlapping phase totals.
+
+Tests use the Python standard library:
 
 ```bash
 python3 -m unittest discover -s tests
 ```
 
-GitHub Actions（`.github/workflows/test.yml`）在每次 push 和 PR 上跑同一组测试。
+GitHub Actions runs the same tests on pushes and pull requests.
 
-## 关于速度
+## Measure the improvement
 
-这套流程想缩短的是关键路径：连续的 owner、按需拆分、定向证明、评审与 CI 并行、按真实风险决定重测。这些都是设计意图，**没有实测过提速倍数**。想比较新旧流程，就用 `trail.py` 在多个同类任务上记录各阶段，委派任务的耗时不要当成模型本身的延迟。
+The intended improvements are shorter handoffs, continuous ownership, focused checks, concurrent review and CI, and retesting based on actual impact. No speedup has been measured or promised.
 
-## 来源
+Compare several tasks of similar scope and risk. Record stage timing and rework. A delegated task's elapsed time includes its investigation, coding, and checks; it is not a measurement of model latency alone.
 
-方法改写自下面三个仓库的固定版本，原始文件不随本包分发，运行时也不会读取。逐项的取舍、改写和触发条件见 `references/provenance.md`。
+## Sources
 
-| 来源 | 作者 | 固定版本 | 主要采纳 | 许可 |
+Methods are adapted from these pinned upstream revisions. The [source map](references/provenance.md) records what was retained, changed, and made conditional. Raw upstream skill files are not runtime dependencies.
+
+| Source | Author | Pinned revision | Main contributions | License notice |
 | --- | --- | --- | --- | --- |
-| [mattpocock/skills](https://github.com/mattpocock/skills/tree/5beb35b040e3de97e54fa9e386d7e42d15c295c2) | Matt Pocock | `5beb35b040e3de97e54fa9e386d7e42d15c295c2` | grilling 的前沿分轮、domain-modeling、codebase-design 的深模块词汇、prototype、to-spec / to-tickets、tdd、diagnosing-bugs、code-review 两轴、improve-codebase-architecture、handoff、triage、wayfinder、retro | MIT，`LICENSES/mattpocock-skills.txt` |
-| [cursor/plugins](https://github.com/cursor/plugins/tree/99b609a72323b70204eab407c622f436e858e112/pstack)（pstack） | Lauren Tan | `99b609a72323b70204eab407c622f436e858e112` | how / why、architect、arena、interrogate、swarm、blast-radius、benchmark-checklist、correct、show-me-your-work、figure-it-out，feature、hillclimb、session-pickup、pause-safely 这几个 playbook，no-comments 的一部分，验证工具的创建与维护 | MIT，`LICENSES/pstack.txt` |
-| [t3dotgg/tstack](https://github.com/t3dotgg/tstack/tree/7de017b3fc9d50c03cf3ecb98fb71e0ca65a78bd) | Theo Browne | `7de017b3fc9d50c03cf3ecb98fb71e0ca65a78bd` | full-send / full-stop、sol-loop、file-pr、babysit-pr、leaving-pr-comments、takeover、modernize、council | MIT，`LICENSES/tstack.txt` |
+| [mattpocock/skills](https://github.com/mattpocock/skills/tree/5beb35b040e3de97e54fa9e386d7e42d15c295c2) | Matt Pocock | `5beb35b040e3de97e54fa9e386d7e42d15c295c2` | Decision-frontier interviews, domain modeling, deep modules, prototypes, specifications, vertical tickets, TDD, diagnosis, Spec/Standards review, architecture exploration, handoffs, triage, wayfinding, and retrospectives. | [MIT](LICENSES/mattpocock-skills.txt) |
+| [pstack](https://github.com/cursor/plugins/tree/99b609a72323b70204eab407c622f436e858e112/pstack) | Lauren Tan | `99b609a72323b70204eab407c622f436e858e112` | Investigation, design shaping, competing designs, adversarial review, bounded parallel work, blast-radius proof, benchmark discipline, structural correction, continuity, cleanup, and verification tools. | [MIT](LICENSES/pstack.txt) |
+| [tstack](https://github.com/t3dotgg/tstack/tree/7de017b3fc9d50c03cf3ecb98fb71e0ca65a78bd) | Theo Browne | `7de017b3fc9d50c03cf3ecb98fb71e0ca65a78bd` | Full-send/full-stop finish lines, Sol review loops, concise PRs, event-driven PR supervision, attributed comments, takeovers, modernization, and council. | [MIT](LICENSES/tstack.txt) |
 
-主要改动：默认的多代理分流（每轮两个评审子代理、七个 why 调查者、实现阶段强制 arena）改成单 agent 默认、按条件升级；评审从“push 之前”挪到“PR 开出后与 CI 并行”；去掉 Cursor 专用的模型名、子代理类型和云端 worker；含义不明的注释保留并列出，而不是直接删。
+Local adaptations include single-owner defaults, conditional multi-model work, review concurrent with CI, impact-based severity, and preserving ambiguous constraint comments until their purpose is understood. Provider-specific names and worker machinery are resolved through the active harness rather than copied from upstream.
 
-## 许可
+## License
 
-MIT，见 `LICENSE`。上游许可声明原文保存在 `LICENSES/`。
+[MIT](LICENSE). Original upstream copyright and permission notices are retained in `LICENSES/`.
