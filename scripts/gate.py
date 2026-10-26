@@ -20,6 +20,7 @@ from urllib.parse import quote
 VIEW_FIELDS = "headRefOid,baseRefName,state,isDraft,autoMergeRequest"
 CHECK_FIELDS = "name,bucket,state"
 NO_CHECKS = ("no required checks reported", "no checks reported")
+POLICY_UNAVAILABLE = "Upgrade to GitHub Pro or make this repository public to enable this feature."
 
 
 class GateError(Exception):
@@ -38,6 +39,16 @@ def parse_json(result: subprocess.CompletedProcess, what: str):
         return json.loads(result.stdout)
     except json.JSONDecodeError as error:
         raise GateError(f"{what}: unreadable response") from error
+
+
+def api_error_is(result: subprocess.CompletedProcess, status: str, message: str) -> bool:
+    if result.returncode == 0:
+        return False
+    try:
+        error = json.loads(result.stdout)
+    except json.JSONDecodeError:
+        return False
+    return isinstance(error, dict) and error.get("message") == message and str(error.get("status")) == status
 
 
 def snapshot(repo: str, pr: str) -> dict:
@@ -60,11 +71,8 @@ def declared_checks(repo: str, branch: str) -> set[str]:
     base = f"repos/{repo}/branches/{quote(branch, safe='')}/protection"
     result = gh("api", "--method", "GET", base)
     if result.returncode:
-        try:
-            error = json.loads(result.stdout)
-        except json.JSONDecodeError:
-            error = {}
-        if not isinstance(error, dict) or error.get("message") != "Branch not protected" or str(error.get("status")) != "404":
+        if not (api_error_is(result, "404", "Branch not protected") or
+                api_error_is(result, "403", POLICY_UNAVAILABLE)):
             raise GateError(f"branch protection query failed: {result.stderr.strip()}")
         classic = {"required_status_checks": None}
     else:
@@ -88,9 +96,12 @@ def declared_checks(repo: str, branch: str) -> set[str]:
     result = gh("api", "--method", "GET",
                 f"repos/{repo}/rules/branches/{quote(branch, safe='')}?per_page=100",
                 "--paginate", "--slurp")
-    if result.returncode:
+    if api_error_is(result, "403", POLICY_UNAVAILABLE):
+        pages = [[]]
+    elif result.returncode:
         raise GateError(f"branch rules query failed: {result.stderr.strip()}")
-    pages = parse_json(result, "branch rules")
+    else:
+        pages = parse_json(result, "branch rules")
     if not isinstance(pages, list) or not all(isinstance(page, list) for page in pages):
         raise GateError("branch rules: expected paginated lists")
     for rule in (rule for page in pages for rule in page):

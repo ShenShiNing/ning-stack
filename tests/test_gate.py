@@ -78,7 +78,7 @@ class Gate(unittest.TestCase):
     def tearDown(self):
         self.dir.cleanup()
 
-    def gate(self, answers, *extra, head=HEAD, finish="ready", policy=None, rules=None, classic_checks=None):
+    def gate(self, answers, *extra, head=HEAD, finish="ready", policy=None, rules=None, classic_checks=None, policy_unavailable=False):
         contexts = policy if policy is not None else []
         answers = [
             checks("branches/main/protection", {"required_status_checks": {
@@ -86,6 +86,10 @@ class Gate(unittest.TestCase):
             checks("rules/branches/", [rules or []]),
             *answers,
         ]
+        if policy_unavailable:
+            message = "Upgrade to GitHub Pro or make this repository public to enable this feature."
+            for answer in answers[:2]:
+                answer.update(code=1, stdout=json.dumps({"message": message, "status": "403"}), stderr=message)
         self.state.write_text(json.dumps({"answers": answers, "calls": []}))
         env = {
             **os.environ,
@@ -145,6 +149,13 @@ class Gate(unittest.TestCase):
                                 capture_output=True, text=True, env=env)
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("403", result.stdout)
+
+    def test_plan_without_protection_requires_explicit_project_policy(self):
+        answers = [view(), NO_REQUIRED, view()]
+        self.passes(answers, "--allow-no-checks", policy_unavailable=True)
+        self.fails(answers, "no required checks", policy_unavailable=True)
+        self.fails([view(), NO_REQUIRED, all_checks([]), view()], "build",
+                   "--require-check", "build", policy_unavailable=True)
 
     def test_stale_head(self):
         self.fails([view(head=OTHER), required([row("build")]), view(head=OTHER)], "head")
