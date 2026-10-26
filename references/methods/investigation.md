@@ -1,62 +1,35 @@
 # Investigation
 
-Grounding methods: how code works, why it is shaped that way, why a bug happens, and how to compare designs. Questions stay read-only.
-
-Contents: How · Why · Diagnose · Competing designs · Parallel exploration.
+Questions stay read-only. Read the method that answers the question; an investigation is not permission to change the system.
 
 ## How
 
-Answers "how does X work", "where should this live", "which layer owns this".
-
-- **Simple** (one module, a narrow question): explore and explain in one pass yourself.
-- **Complex** (a subsystem across many files or services, a cross-cutting feature): split into two to four angles, each a distinct slice. Hand angles to read-only explorers only when their raw output would crowd your context; otherwise walk them in sequence. Synthesize once.
-- When unsure, take the simple path. State your interpretation of a vague scope and proceed; the user can redirect.
-
-Output sections, dropping any that do not apply: **Overview**, **Key concepts**, **How it works** (runtime flow), **Where things live** (`file:line` pointers), **Gotchas**. Senior-engineer onboarding level: a working mental model, not annotated source.
+Read a narrow area yourself, explain its runtime flow, ownership, key concepts, and useful source pointers. For a broad subsystem, divide it into independent angles; delegate read-only exploration only when output would exceed your context or distinct expertise helps. Synthesize once. State an assumption when scope is vague and proceed with the smallest useful interpretation.
 
 ## Why
 
-Answers design rationale, "why did we pick Y", regressions, and data-backed thresholds.
+Anchor the current code, then trace meaningful history through blame, renames, commits, PR discussion, and relevant ADRs. Stop a narrow inquiry when a clear rationale answers it. Widen to issues, docs, chat, or observability only while uncertainty remains or a deep audit is requested. Defensive guards, retries, flags, and thresholds warrant looking for the motivating incident.
 
-1. **Anchor the code**: paths and line ranges, key symbols, `git blame -L` for last touches, `git log --follow` through renames, PR numbers from subjects, and PR bodies and discussion for substantive commits (`gh pr view <n> --json title,body,comments,reviews`). Trace back past the latest commit; the current shape is usually an accretion.
-2. **Scope the search before widening it.** State the question and what would settle it. A narrow why whose anchor already shows a clear rationale (commit message, PR body, ADR, comment) stops there. Widen category by category (issue tracker, docs and ADRs, chat, observability, error tracking, analytics) only while the answer is still open, or when the user asks for a deep historical audit. Record each category searched with its result, searched with nothing, or not searched and why. A null is an answer; an unreachable source is a gap, not a negative.
-3. **Defensive code** (retries, timeouts, null guards, flags, rate limits): look specifically for the incident that motivated it.
-4. **Write with confidence separated**: What we found (cited), What we can reasonably infer, Competing hypotheses, What we do not know, Sources consulted (one line per category searched, including empty ones).
-5. When the question precedes a change, end with **Preserve / Change / Avoid / Risk** constraints.
+Separate sourced facts, reasonable inference, competing hypotheses, and unknowns. Record searched sources, empty results, and access gaps when they matter to confidence; an unreachable source is not a negative result. Before a change, turn the rationale into Preserve / Change / Avoid / Risk constraints.
 
 ## Diagnose
 
-For a hard bug or a performance regression. The loop is the method; skip a phase only with a stated reason.
+1. Build a tight feedback loop that exercises the user's real failure: test, request, replay, fixture, or minimal harness. Observe the failure before theorizing. Pin time/data and isolate state where useful; improve reproduction rate for intermittent failures. If no honest reproduction is possible, report attempts and the missing access or instrumentation.
+2. Minimize until the remaining inputs and steps are load-bearing. Confirm this is the reported failure.
+3. Rank falsifiable hypotheses. Each probe tests one prediction and changes one variable; use a debugger or targeted logs at distinguishing boundaries. For regressions, measure and bisect.
+4. Fix the first wrong state, with a regression test at a seam that reaches it ([Evidence](evidence.md), Tests). Watch red become green and rerun the original reproduction.
+5. Remove temporary probes and harnesses; record the confirmed cause and proof.
 
-1. **Feedback loop.** Build one command that drives the real bug path and goes red on the user's exact symptom: a failing test at the seam that reaches it, an HTTP script, a CLI with a fixture, a replayed captured payload, a minimal harness, a fuzz loop, a bisection script, a differential run of old against new. Tighten it: faster, sharper assertion, deterministic (pin time, seed randomness, isolate files). Flaky bugs: raise the reproduction rate until it is debuggable. Done when the command is red-capable, deterministic, takes seconds, runs unattended, and you have run it and shown the redacted output. No loop, no theory: if you cannot build one, say what you tried and ask for access, a captured artifact or permission to instrument.
-2. **Reproduce and minimise.** Confirm it is the user's failure, not a neighbor. Cut inputs, callers, config and steps one at a time until every remaining element is load-bearing.
-3. **Hypothesise.** Three to five ranked, falsifiable hypotheses: "if X is the cause, changing Y makes it disappear". Show the ranking to the user if they are present; do not wait on it.
-4. **Instrument.** Each probe tests one prediction; change one variable at a time. Prefer a debugger, then targeted logs at distinguishing boundaries, each tagged with a unique prefix such as `[DEBUG-a4f2]`. For performance, measure a baseline and bisect instead of logging.
-5. **Fix and regression test** at a correct seam (see Tests in [evidence.md](evidence.md)): watch it fail, fix at the root cause, watch it pass, re-run the original loop.
-6. **Clean up**: original repro green, the tag prefix grepped to zero, throwaway harnesses removed, and the confirmed hypothesis stated in the commit or PR.
-
-Redact every secret in what you show; keep credentials in the environment. After two failed fixes that share one premise, write the premise down and test it directly before a third.
+After two failed fixes sharing a premise, test that premise before trying a third. Redact secrets from evidence and keep credentials out of code.
 
 ## Competing designs
 
-For a one-way door, a contested shape, or a problem with no precedent. Established patterns skip this.
+Use only for irreversible, contested, or unprecedented choices. Set a task-specific rubric (for example locality, interface depth, migration cost), then produce at least two structurally different whole designs. Separate authors/model families are useful when their independence earns the cost; otherwise sketch sequentially yourself.
 
-1. **Frame**: the artifact each candidate produces and a rubric of three to six gradeable criteria for this task (interface depth, locality, seam placement, migration cost, fit with existing patterns, agent-proofness). Candidates see the task, not the rubric.
-2. **Generate at least two structurally different whole-shape candidates**, not point variations. With delegation available and worth the cost, give separate candidates the same prompt and separate output locations, ideally on different model families; otherwise draft them yourself, one at a time, each committed to before the next.
-3. **Pick a base** by scoring every candidate per criterion, not by feel. A cross-judge on another model family is optional; disagreement with it means a biased pick or an ambiguous rubric, so reread both rationales.
-4. **Graft** the one or two strongest parts of the losers by hand so the result keeps one mental model. Convergence is strong agreement: ship the shared shape. Wild divergence means the frame was under-specified: reframe, do not average.
-5. **Verify** the result like any artifact.
-
-Output: the chosen design, a short note naming the base and why, each graft and its source, rejections with reasons.
+Compare against the rubric, choose one base, and borrow only parts that preserve one coherent model. Convergence supports a shared shape; wide divergence calls for reframing, not averaging. Verify the chosen artifact and explain the selection and rejected trade-offs. A second judge is optional.
 
 ## Parallel exploration
 
-When several independent questions or coverage slices would each fill a context:
+Use for independent questions or coverage slices that each need substantial context. Declare the expected artifact and done condition; partition scope or declare how a race will be judged before starting. Give each explorer a standalone goal, exact slice, verification method, and report format. Measurement and verification results identify the SHAs they cover.
 
-1. State the done predicate and what comes back.
-2. Choose the shape: partition into slices, or race identical briefs and declare the selection rule (first pass, rank all, best of) before starting.
-3. Every brief stands alone: goal, scope, the exact slice, how to verify, what to report. Briefs that verify or measure name the exact SHAs and method, and results must record them.
-4. Results report `PASS`, `ISSUES` (every provable issue, not only the first) or `BLOCKED`, with evidence. A missing or unpinned result is retried once, then recorded as a gap. A gap is not a pass.
-5. Return one consolidated table, issue one-liners, and gaps.
-
-Writers in parallel each get their own worktree, within the project's concurrency limits. Read-only explorers do not count toward it.
+Consolidate `PASS`, `ISSUES`, or `BLOCKED` results with evidence and gaps. Missing, unpinned, or failed work is a gap, never a pass. Writers need separate isolated workspaces within project limits; read-only explorers do not consume implementer slots.

@@ -57,7 +57,7 @@ Rate each change `Strong`, `Worth exploring` or `Speculative`, and name one top 
 
 ## Report
 
-Lead with the top recommendation. Then the map summary (short), each candidate (files or modules, problem, proposal, benefits, cost and migration, strength, ADR conflicts), the kept items with reasons, and the unknowns. A visual report is useful for graph-shaped structure: in T3, render one HTML artifact through the preview tools when the user asks to see it.
+Lead with the top recommendation. Then the map summary (short), each candidate (files or modules, problem, proposal, benefits, cost and migration, strength, ADR conflicts), the kept items with reasons, and the unknowns. Use a visual when it makes graph-shaped structure clearer; follow the active harness's rendering rules.
 
 Propose no code until the user picks a candidate.
 

@@ -1,11 +1,13 @@
 ---
 name: ning-stack
-description: Ning's engineering workflow for design, end-to-end delivery, debt cleanup, and architecture reassessment. Use when specifying or shipping work, driving a PR, cleaning a codebase, reviewing its architecture, or resuming a task.
+description: An engineering agent stack combining methods from Matt Pocock's skills, pstack, and tstack. Use for investigation, design, prototypes, delivery, reviews, verification, cleanup, architecture, or work across sessions.
 ---
 
 # ning-stack
 
 Build complex things as simply as possible. One owner carries each outcome; independent review and evidence earn the finish.
+
+Use individual methods for focused requests, or compose them through the four flows for end-to-end work. Project and harness adapters supply environment-specific tools and constraints.
 
 ## Project rules
 
@@ -15,11 +17,14 @@ Apply harness and tool rules, then the user's task instructions, then project ru
 
 ## Route
 
-Read the matching flow and follow its conditional pointers; other methods stay unloaded.
+Choose by the requested outcome. Read a method directly for a focused request; load a flow for end-to-end work and follow only its relevant pointers.
 
 | Request | Read |
 | --- | --- |
 | Explain or investigate a question | [Investigation](references/methods/investigation.md); answer read-only |
+| Review a diff or assess a contested decision | [Review](references/methods/review.md); read-only |
+| Assess tests, blast radius, measurement, or reusable proof | [Evidence](references/methods/evidence.md) |
+| Prototype an unsettled behavior or interface | [Design, Prototype](references/design.md#prototype) |
 | Decide a new capability's behavior | [Design](references/design.md) |
 | Ship a feature, fix, refactor, or PR | [Delivery](references/delivery.md) |
 | Remove dead code, stale comments, excess tests, or other debt | [Cleanup](references/cleanup.md) |

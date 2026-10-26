@@ -1,86 +1,46 @@
 # Design
 
-Reach agreement with the user on a new capability, grounded in the real source, and hand delivery a brief proportional to what the implementer needs. Not more.
-
-Contents: Classify · Ground · Align · Domain · Shape · Prototype · Output · Long horizon.
+Agree on behavior and implementation shape, then give delivery the smallest brief it can execute.
 
 ## Classify
 
-Pick the lightest path that fits, and say which one you took.
-
-- **Covered**: an existing pattern, the project's design authority, or an agreed spec already answers how it should behave. No design round. Write the three-line frame from delivery Stage 0, cite what covers it, go to delivery.
-- **Bounded**: one capability, a few open decisions, fits one session. Ground, one alignment round, inline brief.
-- **Deep**: high uncertainty, a one-way door, contested ownership, or the user asks to be grilled. Ground, alignment in rounds until the frontier is empty, shaped design, written spec.
-- **Foggy**: too big for one session and the route is not visible yet. Long horizon below.
+- **Covered:** an agreed spec, existing pattern, or design authority already answers the question. Cite it and go to delivery.
+- **Bounded:** a capability fits one session. Ground it, resolve consequential choices, write an inline brief.
+- **Deep:** uncertainty, irreversible choices, contested ownership, or explicit grilling warrants repeated alignment and a written spec.
+- **Foggy:** the effort exceeds one session and the route is unclear. Use Long horizon below.
 
 ## Ground
 
-Facts are your job. Before asking the user anything:
-
-- Read the code that owns the area and its callers. Use the `how` method ([methods/investigation.md](methods/investigation.md)) when the subsystem is unfamiliar; use `why` when the design would reverse or redraw an existing decision, so the old rationale becomes a constraint instead of a guess.
-- Read the domain glossary and active ADRs for the area (wherever the project keeps them).
-- Find prior art in the codebase: the nearest existing feature, test and UI pattern an agent would copy.
-
-Done when you can describe the current behavior, the owning module, and the constraint set, each with a source pointer.
+Read the owner, callers, applicable glossary/ADRs, and the nearest feature, test, and UI precedent. Use [Investigation](methods/investigation.md), How for unfamiliar behavior and Why before reversing a decision. Proceed when current behavior, ownership, and constraints have source pointers. Look up observable facts yourself.
 
 ## Align
 
-Map the open decisions as a **design tree**. The **frontier** is every decision whose prerequisites are settled.
+Ask only consequential product, scope, ownership, or irreversible choices. Decide reversible details yourself and carry settled answers forward.
 
-1. Ask the whole frontier in one round. Number each question, give the options when there are any, and give your recommended answer, worded so "yes" accepts it.
+Group currently answerable questions into one numbered round, each with options and a recommendation that “yes” can accept. Defer questions that depend on unanswered ones. Recompute this frontier after answers; stop when it is empty and the user confirms consequential choices. Do not implement those choices before agreement.
 
-   ```
-   Q1. <title>: <question and options>
-   Recommended: <answer and one-line reason>
-   ```
-
-2. Ask only what is the user's to decide: product behavior, scope, ownership across contexts, irreversible or costly choices. A fact you could observe goes to a lookup or a sketch, not the user. A reversible technical detail is yours: decide it and list it in the brief.
-3. A question that depends on another question in the same round waits for a later round. While a lookup runs, ask the questions that do not depend on it.
-4. Recompute the frontier from the answers and continue. Bounded designs usually close in one round; deep ones take as many as the tree needs.
-
-Done when the frontier is empty and the user confirms the shared understanding for anything consequential. Do not act on a design before that confirmation.
-
-## Domain
-
-While aligning, keep the domain model honest:
-
-- Challenge a term that conflicts with the glossary in the moment ("the glossary defines X as A; you seem to mean B").
-- Replace vague or overloaded words with a canonical term.
-- Stress relationships with concrete edge-case scenarios.
-- Cross-check claims against code and surface contradictions.
-- Update the owning glossary when a term resolves, with no implementation detail in it.
-- Offer an ADR only when the choice is hard to reverse, surprising without context, and the result of a real trade-off. All three, or skip it.
+Challenge ambiguous terms against the glossary and concrete scenarios. Update resolved domain terms when project documentation rules call for it; discussion alone does not require a document. Offer an ADR when the choice is hard to reverse, surprising without context, and rests on a real trade-off.
 
 ## Shape
 
-For anything that crosses a module seam:
+For a new or changed interface, sketch caller usage first. State ownership, data/state shape, errors, constraints, test seams, and where modules belong. Existing seams and established patterns need no new design round.
 
-1. **Write the caller's usage first**, then derive types, signatures and module placement from it. Sketch with unimplemented bodies when it helps.
-2. Use the deep-module vocabulary: **module**, **interface** (everything a caller must know, including invariants, errors, ordering), **depth** (behavior per unit of interface), **seam**, **adapter**, **leverage**, **locality**. Apply the deletion test to each new module: if removing it makes complexity vanish, it was a pass-through; if that complexity reappears across callers, the module was earning its place. One adapter suggests hypothetical variability, while two can justify an adapter seam; a current ownership or lifecycle requirement can also justify a boundary without inventing alternative implementations.
-3. Screen for the next contributor: an agent that sees only the files it opened, copies the nearest example and takes the shortest path that compiles. Prefer the shape where a change that looks right from one file is right for the repo.
-4. Name the test seams: existing ones first, the highest seam possible, as few as possible. Each gets one line on what it catches and misses.
-5. **Competing sketches** only for a one-way door, a contested shape, or no precedent in the codebase: produce at least two structurally different whole-shape sketches and pick by rubric (Competing designs in [methods/investigation.md](methods/investigation.md)). Contested and costly after that: run an adversarial cross-model review of the chosen sketch ([methods/review.md](methods/review.md), Interrogate). Established patterns skip both.
+Prefer deep modules: little a caller must know, substantial behavior behind the interface. Apply the deletion test: if removing a module removes complexity, it is a pass-through; if complexity spreads across callers, it earns its place. A second real implementation or a present ownership/lifecycle need can justify an adapter; hypothetical variability cannot.
 
-During delivery the sketch is the contract: a needed deviation is a signal to surface, not friction to absorb. When the same workaround shape recurs, unrelated edge cases need special branches, types need escape hatches, or callers must know internal rules, scrap the sketch and redesign as if the new constraint were there from day one, smaller before it grows.
+Use [Competing designs](methods/investigation.md) only for contested, irreversible, or unprecedented shapes. A still-contested costly choice may warrant [Interrogate](methods/review.md). During implementation, surface consequential departures from the agreed shape. Repeated workarounds, escape hatches, or caller knowledge of internals are reasons to revisit the sketch rather than accumulate exceptions.
 
 ## Prototype
 
-When the answer is something you could observe, sketch it instead of asking.
-
-- Question decides the shape. "Does this logic or state model feel right?" gets a single runnable file that drives the state through hard cases and shows full state after each action. "What should this look like?" first goes to the project's design authority; an uncovered UI is one static mock composed from existing patterns, presented, then stop for approval. Several variants only when no existing pattern fits.
-- Throwaway from the start and marked as such, trivial to run, in-memory state, no polish or tests.
-- Fold the validated decision into the brief. Keep the prototype out of the main branch.
+Settle an empirical question with a throwaway, runnable sketch: minimal state, no polish or test suite, full state visible for logic experiments. UI follows project design authority first. For uncovered UI, compose one static mock from existing patterns, present it, and wait for approval; use several variants only if no pattern fits. Fold the decision into the brief and keep the prototype off main.
 
 ## Output
 
-Size the artifact to the execution, not to the idea.
+- **Inline brief, default:** acceptance, decisions and reasons, ownership/seams, constraints, exclusions.
+- **Spec, multi-owner/session work or on request:** user problem and solution, testable behaviors, decisions, test seams, exclusions. Prefer durable concepts to paths or code that will drift; retain a prototype snippet when it precisely encodes a decision.
+- **Tickets, work spanning owners/sessions:** independently demonstrable vertical slices sized to one context, prefactor first, blocking edges explicit. Confirm granularity and edges once. Migration strategy follows the project's data and hard-cut rules.
 
-- **Inline brief** (default): acceptance, decisions with reasons, ownership and seams, constraints, out of scope. Lives in the thread or the delivery child's prompt.
-- **Spec**: only when several owners or sessions will execute it or the user asks. Sections: Problem (user's view), Solution (user's view), Key behaviors (numbered and testable, as many as the behavior needs and no more), Decisions (modules, interfaces, schema, contracts), Test seams, Out of scope. No file paths or code that will go stale, except a prototype snippet that encodes a decision more precisely than prose.
-- **Tickets**: only when the work spans sessions or owners. Tracer-bullet vertical slices, each demoable alone and sized to one context, prefactoring first, each with its blocking edges. A wide mechanical refactor goes expand, migrate in batches, contract. Present the breakdown once for confirmation of granularity and edges.
-
-Publishing a spec or tickets to the tracker needs the user's request or a standing authorization; otherwise keep them local and say where.
+Tracker publication needs authorization; otherwise keep artifacts local and report their location.
 
 ## Long horizon
 
-For a foggy effort larger than one session, chart a **map**: the destination in one or two lines, standing notes, decisions so far (one line each, linking where the detail lives), **not yet specified** (the fog you can see but not phrase sharply), and out of scope. Each sharp question becomes a decision ticket typed research, prototype, grilling or task, with blocking edges; the frontier is the open, unblocked, unclaimed tickets. Resolve one decision ticket per session (research tickets may run in parallel), record the answer, graduate the fog it clears. The map plans; it hands off to delivery once nothing is left to decide. Keep the map local unless the user authorizes tracker publishing.
+Keep a local map: destination, settled decisions with links, unresolved questions, and exclusions. Turn sharp questions into research, prototype, grilling, or implementation tickets with blocking edges. Work the unblocked frontier; resolve a coherent decision per session and update the map. Start delivery when the relevant decisions are settled. Publish the map only when authorized.

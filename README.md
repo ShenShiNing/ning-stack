@@ -1,10 +1,21 @@
 # ning-stack
 
-My personal software engineering workflow, packaged as one agent skill for Claude Code and Codex. It draws extensively from Matt Pocock's skills, Lauren Tan's pstack, and Theo Browne's tstack, adapted to how I work.
+An engineering agent stack integrating and adapting the strengths of Matt Pocock's skills, Lauren Tan's pstack, and Theo Browne's tstack. It combines reusable engineering methods, four workflows that compose them, and small tools for observable checks. It works with Claude Code and Codex, with project and harness details supplied by adapters.
 
-Build complex things as simply as possible. Keep one owner accountable, bring me consequential decisions, and prove the result on the real artifact.
+Build complex things as simply as possible. Keep one owner accountable, agree on consequential decisions with the user, and prove the result on the real artifact.
 
-## How I work
+## What the stack contains
+
+| Part | Role |
+| --- | --- |
+| Engineering methods | Investigation, diagnosis, domain and interface design, prototypes, specifications, testing, verification, review, architecture analysis, and continuity. Use them independently or together. |
+| Four workflows | Design, delivery, cleanup, and optimization compose the methods around an outcome and finish line. |
+| Executable tools | Decision and timing trails, plus a read-only GitHub PR gate. |
+| Project and harness adapters | Supply product constraints, architecture, commands, model choices, permissions, and environment-specific tool calls. |
+
+Matt's skills contribute decision clarity, deep modules, vertical slices, and behavior-focused tests. pstack contributes investigation, design exploration, blast-radius analysis, and structural correction. tstack contributes delivery finish lines, bounded review, PR supervision, and continuity. The [source map](docs/provenance.md) explains the adaptations.
+
+## Principles
 
 - One request owner carries the work to its agreed finish line. One implementer owns each coherent slice through review and CI fixes.
 - Investigate observable facts before asking questions. Bring consequential product choices together, with a recommendation and its trade-offs.
@@ -22,9 +33,11 @@ Build complex things as simply as possible. Keep one owner accountable, bring me
 | Cleanup | Remove debt, dead code, stale comments, and unnecessary tests against explicit standards, with evidence for each change. | [Cleanup](references/cleanup.md) |
 | Optimization | Reassess logical and physical architecture, including the premises behind earlier decisions. Keeping the current design is a valid outcome. | [Optimization](references/optimization.md) |
 
-## Load only what the task needs
+## Use a method or compose a workflow
 
-`SKILL.md` contains shared rules and routing. An ordinary change loads the delivery flow; specialist methods are loaded when their conditions apply.
+`SKILL.md` is one discoverable entrypoint. A focused review or investigation goes straight to its method; an end-to-end change uses a workflow. Loading is conditional in both cases.
+
+Ask the agent to use ning-stack to investigate a decision, prototype a state model, review a diff, audit test value, or resume work. These requests do not require a delivery cycle. Shipping code, publishing artifacts, or changing external state still requires the corresponding authorization.
 
 - [Investigation](references/methods/investigation.md): understand behavior and rationale, diagnose difficult bugs, compare designs, and divide independent investigations.
 - [Review](references/methods/review.md): Spec and Standards assessments, findings ledgers, and bounded review rounds. Cross-model interrogation and council are available for consequential disputes or explicit requests.
@@ -68,7 +81,15 @@ Keep project-specific constraints and operating procedures in the project.
 
 ## Validate
 
-The only helper script, `scripts/trail.py`, records decision notes and explicit run/span timing. Spans can overlap. Its report distinguishes elapsed time, active wall time, and overlapping phase totals.
+`scripts/trail.py` records decision notes and explicit run/span timing. Spans can overlap. Its report distinguishes elapsed time, active wall time, and overlapping phase totals.
+
+`scripts/gate.py` is a read-only GitHub PR check using an authenticated GitHub CLI. Supply the full head SHA covered by your proof and review:
+
+```bash
+python3 scripts/gate.py --repo OWNER/REPO --pr 123 --head FULL_SHA --finish ready
+```
+
+It prints `PASS` or the failed conditions: head mismatch, auto-merge enabled for a ready finish, or required checks not passing. It reads classic branch protection and active branch rules to catch required checks that never reported, then queries their current results. The token must be able to read those policies. Use repeatable `--require-check NAME` for additional project checks. If the repository declares no required checks, supply project check names or explicitly confirm a no-check policy with `--allow-no-checks`. Query failures and missing evidence fail closed. Required-workflow rules need separate verification and block this helper. It neither changes PR state nor merges; approval, authorization, queue state, base interactions, and the final pinned merge remain the owner's responsibility. A pass is a snapshot, not protection against a later push.
 
 Tests use the Python standard library:
 

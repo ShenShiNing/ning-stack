@@ -1,6 +1,6 @@
 # Learning
 
-Improve the environment and this workflow from evidence of real friction: repeated corrections, slow stages, missed checks. One-offs are not lessons.
+Improve the environment, methods, and workflows from evidence of real friction: repeated corrections, slow stages, missed checks. One-offs are not lessons.
 
 Contents: Correct · Retro · Timing · Evolving this stack.
 
