@@ -1,6 +1,6 @@
 # Review
 
-One independent reviewer per round, fresh and read-only, on the user/project model (another family when available). No edits, commits, pushes, comments, or subagents. In T3 each round is a new `delegate_task`, never a message to a previous reviewer.
+One independent reviewer per round, fresh and read-only, on the user/project model (another family when available). No edits, commits, pushes, comments, or subagents. Each round starts a new reviewer task rather than messaging a previous reviewer.
 
 ## Standard round
 

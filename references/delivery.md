@@ -35,7 +35,7 @@ Run the framed proof. Stop when acceptance and relevant risks are covered. Keep 
 
 Commit coherent changes. For `local`, run the independent review below against the local committed diff, fix real findings, and report without pushing or requiring remote CI.
 
-Otherwise check for an existing PR, push, and open one ready PR. Follow the project's title/body convention: problem, change, evidence, model and harness; scan for private details. In T3, whoever creates, takes over, or pushes a PR calls `link_pull_request` as the next tool call, children included. A child's last line reports PR URL, head, checks, and review state.
+Otherwise check for an existing PR, push, and open one ready PR. Follow the project's title/body convention: problem, change, evidence, model and harness; scan for private details. Follow the project's PR registration and supervision rules. A child's last line reports PR URL, head, checks, and review state.
 
 ## Stage 4: Review and CI together
 
@@ -54,6 +54,8 @@ Fetch and evaluate the latest head:
 1. Proof and independent review cover its behavior; no unresolved blocker, should, or human request for changes remains.
 2. Required checks pass on this head. Local proof cannot replace a required remote check.
 3. No merge conflict. Inspect base changes affecting this patch or its dependencies, contracts, and shared resources, even without conflicts. Rebase for an interaction, conflict, or project requirement; then renew affected proof and review. See Evidence, Reuse.
+
+For a GitHub PR, run `scripts/gate.py --repo OWNER/REPO --pr NUMBER --head REVIEWED_SHA --finish ready|merged` from the skill directory before finishing. Supply project check names with `--require-check NAME` when needed; see the [README](../README.md#validate). A pass covers only the helper's observable conditions, not the review or authorization decision.
 
 For merged, use the configured merge method with the head pinned (`--match-head-commit` or equivalent), then confirm merge. For ready, leave the PR open with auto-merge off. If a gate cannot be met, report the blocker and ask only for the decision needed; preserve the PR unmerged.
 

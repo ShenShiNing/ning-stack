@@ -1,4 +1,4 @@
 interface:
   display_name: "ning-stack"
-  short_description: "Design, deliver, clean up and optimize code"
-  default_prompt: "Use $ning-stack to take this change to a ready PR."
+  short_description: "Engineering methods from Matt, pstack and tstack"
+  default_prompt: "Use $ning-stack to choose the engineering methods or workflow this task needs."
