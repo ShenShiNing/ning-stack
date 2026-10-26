@@ -48,6 +48,8 @@ def api_error_is(result: subprocess.CompletedProcess, status: str, message: str)
         error = json.loads(result.stdout)
     except json.JSONDecodeError:
         return False
+    if isinstance(error, list) and len(error) == 1:
+        error = error[0]
     return isinstance(error, dict) and error.get("message") == message and str(error.get("status")) == status
 
 

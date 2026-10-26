@@ -88,8 +88,9 @@ class Gate(unittest.TestCase):
         ]
         if policy_unavailable:
             message = "Upgrade to GitHub Pro or make this repository public to enable this feature."
-            for answer in answers[:2]:
-                answer.update(code=1, stdout=json.dumps({"message": message, "status": "403"}), stderr=message)
+            for index, answer in enumerate(answers[:2]):
+                body = {"message": message, "status": "403"}
+                answer.update(code=1, stdout=json.dumps(body if index == 0 else [body]), stderr=message)
         self.state.write_text(json.dumps({"answers": answers, "calls": []}))
         env = {
             **os.environ,
