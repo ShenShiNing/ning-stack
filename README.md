@@ -32,7 +32,7 @@ Build complex things as simply as possible. Keep one owner accountable, bring me
 - [Continuity](references/methods/continuity.md): decision trails, unattended work, pause and resume, handoffs, takeovers, old PRs, and backlogs.
 - [Learning](references/methods/learning.md): structural fixes for recurring mistakes, retrospectives, and stage timing.
 
-Small changes do not require competing designs, a review panel, or a long planning session.
+Small changes use an inline frame and existing check output. Separate specs, decomposition checklists, and decision trails are conditional; a findings ledger starts only when a finding exists. Review rounds have a ceiling, not a required count. Competing designs and review panels stay conditional.
 
 ## Install
 
@@ -86,7 +86,7 @@ Compare several tasks of similar scope and risk. Record stage timing and rework.
 
 ## Sources
 
-Methods are adapted from the upstream projects below. The [source map](references/provenance.md) records what was retained, changed, and made conditional. Raw upstream skill files are not runtime dependencies.
+Methods are adapted from the upstream projects below. The [source map](docs/provenance.md) records what was retained, changed, and made conditional. Raw upstream skill files are not runtime dependencies.
 
 | Source | Author | Main contributions | License notice |
 | --- | --- | --- | --- |
