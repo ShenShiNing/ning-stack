@@ -6,7 +6,7 @@ One request owner carries the finish line. One slice owner keeps a coherent chan
 
 State acceptance, finish line, and risk in the existing progress note. A small task needs only a few lines. Split only if work is genuinely independent; name ownership, blocking steps, and shared state when a split is needed. Give each child a standalone brief: goal, owned paths, acceptance, finish line, PR policy and authorization limits, proof, and report with evidence and head SHA.
 
-**Finish line:** `local` = committed and reviewed; `ready` = PR passes its gate, left unmerged; `merged` = merged after the gate. User instructions win, then the project default, otherwise `ready`.
+**Finish line:** `local` = committed, proven, and reviewed when required; `ready` = PR passes its gate, left unmerged; `merged` = merged after the gate. User instructions win, then the project default, otherwise `ready`.
 
 - `full send` selects merged; `full stop` selects ready. Both authorize this task's pushes, own-branch `--force-with-lease`, and proof methods such as running the app or captures, subject to harness and project limits. Full send also authorizes the gated merge. Production, data deletion, closing PRs, and other branches are outside these grants.
 - For full stop, disable auto-merge and leave merge queues before other work; recheck before each push and handoff. Never merge, enqueue, enable auto-merge, or delegate a merge. Any ready finish leaves auto-merge off.
@@ -17,7 +17,7 @@ State acceptance, finish line, and risk in the existing progress note. A small t
 | R1 bounded behavior or wiring unchanged public capabilities | relevant tests or reproduction, affected type and lint checks |
 | R2 shared semantics or contracts, security, state, concurrency, lifecycle, persistence, broad tooling, or unknown impact | R1 plus checks for the actual affected risks; read [Evidence](methods/evidence.md), Blast radius |
 
-Escalate when impact grows. Project gates still apply; a scheduled full run never substitutes for required pre-merge proof.
+Classify instructions and operational documents by what consuming them changes, not their extension. Escalate when impact grows. Project gates still apply; a scheduled full run never substitutes for required pre-merge proof.
 
 ## Stage 1: Ground
 
@@ -33,13 +33,13 @@ Run the framed proof. Stop when acceptance and relevant risks are covered. Keep 
 
 ## Stage 3: Publish, or finish locally
 
-Commit coherent changes. For `local`, run the independent review below against the local committed diff, fix real findings, and report without pushing or requiring remote CI.
+Commit coherent changes. For `local`, apply the review policy below to the local committed diff, fix real findings, and report without pushing or requiring remote CI.
 
 Otherwise check for an existing PR, push, and open one ready PR. Follow the project's title/body convention: problem, change, evidence, model and harness; scan for private details. Follow the project's PR registration and supervision rules. A child's last line reports PR URL, head, checks, and review state.
 
 ## Stage 4: Review and CI together
 
-Launch one fresh reviewer against the pushed head while CI runs on that same head. Read [Review](methods/review.md) for the brief, severity, and round budget. A stricter project ordering governs when present.
+Apply [Review](methods/review.md), Scope, including its narrow mechanical-document exemption. When review is required, launch one fresh reviewer against the pushed head while CI runs on that same head. That method defines the brief, severity, and round budget. A stricter project ordering governs when present.
 
 ## Stage 5: Fix loop
 
@@ -51,7 +51,7 @@ Batch fixes into one push per round. Distinguish product failures from infrastru
 
 Fetch and evaluate the latest head:
 
-1. Proof and independent review cover its behavior; no unresolved blocker, should, or human request for changes remains.
+1. Proof and any required independent review cover its behavior; no unresolved blocker, should, or human request for changes remains. Check required GitHub approvals separately from the agent verdict.
 2. Required checks pass on this head. Local proof cannot replace a required remote check.
 3. No merge conflict. Inspect base changes affecting this patch or its dependencies, contracts, and shared resources, even without conflicts. Rebase for an interaction, conflict, or project requirement; then renew affected proof and review. See Evidence, Reuse.
 
@@ -61,7 +61,7 @@ For merged, use the configured merge method with the head pinned (`--match-head-
 
 ## Stage 7: Close out and waiting
 
-Report acceptance, proof, review outcome, PR or local finish, and gaps. Clean up only this task's worktree and branch when safe. Unwatch before handoff.
+Report acceptance, proof, review outcome, PR or local finish, and gaps. Clean up only this task's worktree and branch when safe. Unwatch before handoff. Record recurring debt for cleanup, a changed architectural premise for optimization, and observed process friction for [Learning](methods/learning.md); do not expand the delivered task into those follow-ups without authorization.
 
 When waiting, use harness completion events and the PR watcher, owned by the request thread. Follow instructions to end the turn after registering a watcher. Without a watcher, check only at harness-permitted decision points; otherwise report the exact pending gate. No polling loops or watcher agents.
 

@@ -6,7 +6,7 @@
 
 Prints PASS and exits 0, or prints each failed condition and exits 1. It never
 changes remote state and never retries. The result is a snapshot: the final
-merge must still pin the head, and review, authorization and queue decisions
+merge must still pin the head, and review acceptance, authorization and queue decisions
 stay with the caller. Required checks are GitHub's required-check policy plus
 any --require-check names; names add to the policy and never waive it.
 """
@@ -17,7 +17,7 @@ import subprocess
 import sys
 from urllib.parse import quote
 
-VIEW_FIELDS = "headRefOid,baseRefName,state,isDraft,autoMergeRequest"
+VIEW_FIELDS = "headRefOid,baseRefName,state,isDraft,autoMergeRequest,mergeable,reviewDecision"
 CHECK_FIELDS = "name,bucket,state"
 NO_CHECKS = ("no required checks reported", "no checks reported")
 POLICY_UNAVAILABLE = "Upgrade to GitHub Pro or make this repository public to enable this feature."
@@ -66,6 +66,12 @@ def snapshot(repo: str, pr: str) -> dict:
         raise GateError("pr view: missing state or isDraft")
     if "autoMergeRequest" not in data:
         raise GateError("pr view: missing autoMergeRequest")
+    if data.get("mergeable") not in ("MERGEABLE", "CONFLICTING", "UNKNOWN"):
+        raise GateError("pr view: missing or invalid mergeable")
+    if "reviewDecision" not in data or data["reviewDecision"] not in (
+        None, "", "APPROVED", "CHANGES_REQUESTED", "REVIEW_REQUIRED"
+    ):
+        raise GateError("pr view: missing or invalid reviewDecision")
     return data
 
 
@@ -168,6 +174,10 @@ def evaluate(args: argparse.Namespace) -> list[str]:
             problems.append(f"PR is not open ({pr['state']}) {label} checks")
         if pr["isDraft"]:
             problems.append(f"PR is a draft {label} checks")
+        if pr["mergeable"] != "MERGEABLE":
+            problems.append(f"mergeable is {pr['mergeable']} {label} checks; resolve conflicts or check again when calculated")
+        if pr["reviewDecision"] == "CHANGES_REQUESTED":
+            problems.append(f"reviewDecision is CHANGES_REQUESTED {label} checks")
         if args.finish == "ready" and pr["autoMergeRequest"] is not None:
             problems.append(f"auto-merge is enabled {label} checks")
 
