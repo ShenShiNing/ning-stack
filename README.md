@@ -86,13 +86,13 @@ Compare several tasks of similar scope and risk. Record stage timing and rework.
 
 ## Sources
 
-Methods are adapted from these pinned upstream revisions. The [source map](references/provenance.md) records what was retained, changed, and made conditional. Raw upstream skill files are not runtime dependencies.
+Methods are adapted from the upstream projects below. The [source map](references/provenance.md) records what was retained, changed, and made conditional. Raw upstream skill files are not runtime dependencies.
 
-| Source | Author | Pinned revision | Main contributions | License notice |
-| --- | --- | --- | --- | --- |
-| [mattpocock/skills](https://github.com/mattpocock/skills/tree/5beb35b040e3de97e54fa9e386d7e42d15c295c2) | Matt Pocock | `5beb35b040e3de97e54fa9e386d7e42d15c295c2` | Decision-frontier interviews, domain modeling, deep modules, prototypes, specifications, vertical tickets, TDD, diagnosis, Spec/Standards review, architecture exploration, handoffs, triage, wayfinding, and retrospectives. | [MIT](LICENSES/mattpocock-skills.txt) |
-| [pstack](https://github.com/cursor/plugins/tree/99b609a72323b70204eab407c622f436e858e112/pstack) | Lauren Tan | `99b609a72323b70204eab407c622f436e858e112` | Investigation, design shaping, competing designs, adversarial review, bounded parallel work, blast-radius proof, benchmark discipline, structural correction, continuity, cleanup, and verification tools. | [MIT](LICENSES/pstack.txt) |
-| [tstack](https://github.com/t3dotgg/tstack/tree/7de017b3fc9d50c03cf3ecb98fb71e0ca65a78bd) | Theo Browne | `7de017b3fc9d50c03cf3ecb98fb71e0ca65a78bd` | Full-send/full-stop finish lines, Sol review loops, concise PRs, event-driven PR supervision, attributed comments, takeovers, modernization, and council. | [MIT](LICENSES/tstack.txt) |
+| Source | Author | Main contributions | License notice |
+| --- | --- | --- | --- |
+| [mattpocock/skills](https://github.com/mattpocock/skills/tree/main) | Matt Pocock | Decision-frontier interviews, domain modeling, deep modules, prototypes, specifications, vertical tickets, TDD, diagnosis, Spec/Standards review, architecture exploration, handoffs, triage, wayfinding, and retrospectives. | [MIT](LICENSES/mattpocock-skills.txt) |
+| [pstack](https://github.com/cursor/plugins/tree/main/pstack) | Lauren Tan | Investigation, design shaping, competing designs, adversarial review, bounded parallel work, blast-radius proof, benchmark discipline, structural correction, continuity, cleanup, and verification tools. | [MIT](LICENSES/pstack.txt) |
+| [tstack](https://github.com/t3dotgg/tstack/tree/main) | Theo Browne | Full-send/full-stop finish lines, Sol review loops, concise PRs, event-driven PR supervision, attributed comments, takeovers, modernization, and council. | [MIT](LICENSES/tstack.txt) |
 
 Local adaptations include single-owner defaults, conditional multi-model work, review concurrent with CI, impact-based severity, and preserving ambiguous constraint comments until their purpose is understood. Provider-specific names and worker machinery are resolved through the active harness rather than copied from upstream.
 

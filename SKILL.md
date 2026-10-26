@@ -37,4 +37,4 @@ Read only the row that matches. Flows chain: design ends in a brief that deliver
 
 ## Sources
 
-Methods are adapted from Matt Pocock's skills, pstack and tstack at pinned revisions. [references/provenance.md](references/provenance.md) maps each source to what was kept and where; read it only when updating the stack or asked about sources.
+Methods are adapted from Matt Pocock's skills, pstack, and tstack. [references/provenance.md](references/provenance.md) maps each source to what was kept and where; read it only when updating the stack or asked about sources.
