@@ -45,7 +45,18 @@ Ask the agent to use ning-stack to investigate a decision, prototype a state mod
 - [Continuity](references/methods/continuity.md): decision trails, unattended work, pause and resume, handoffs, takeovers, old PRs, and backlogs.
 - [Learning](references/methods/learning.md): structural fixes for recurring mistakes, retrospectives, and stage timing.
 
-Small changes use an inline frame and existing check output. Separate specs, decomposition checklists, and decision trails are conditional; a findings ledger starts only when a finding exists. Review rounds have a ceiling, not a required count. Competing designs and review panels stay conditional.
+Small changes use an inline frame and existing check output. Separate specs, decomposition checklists, and decision trails are conditional; a findings ledger starts only when a finding exists. Review rounds have a ceiling, not a required count. Meaning-preserving prose repairs may skip review when user/project rules allow; semantic changes to agent instructions and operating procedures retain it. Competing designs and review panels stay conditional.
+
+## Connect the four flows
+
+| Input | Flow | Outcome and next step |
+| --- | --- | --- |
+| A new capability or an unsettled requirement | Design | Agree acceptance and constraints; hand an inline brief, spec, or vertical tickets to Delivery. |
+| An agreed feature, fix, or refactor | Delivery | Prove, review, and finish locally, ready, or merged. Record maintenance and learning findings without expanding the task. |
+| Debt measured against current project standards | Cleanup | Keep, remove, rewrite, or encode with evidence; ship changes through Delivery. A disputed architectural premise goes to Optimization. |
+| Architectural friction or a changed premise | Optimization | Keep the current choice or recommend a logical/physical restructure; an approved candidate goes through Design and Delivery. |
+
+Learning feeds observed failures and friction back into these methods. Recurring maintenance uses an agreed scope, cadence, and action budget; schedules and external writes need authorization. Existing records carry the handoffs, so a small task does not need four documents or four separate agent sessions.
 
 ## Install
 
@@ -89,7 +100,11 @@ Keep project-specific constraints and operating procedures in the project.
 python3 scripts/gate.py --repo OWNER/REPO --pr 123 --head FULL_SHA --finish ready
 ```
 
-It prints `PASS` or the failed conditions: head mismatch, auto-merge enabled for a ready finish, or required checks not passing. It reads classic branch protection and active branch rules to catch required checks that never reported, then queries their current results. The token must be able to read those policies. Use repeatable `--require-check NAME` for additional project checks. If there are no server requirements, supply project check names or explicitly confirm a no-check policy with `--allow-no-checks`. GitHub's explicit response that the plan does not offer protection counts as no server policy; it still requires an explicit project policy. Permission errors, other query failures, and missing evidence fail closed. Required-workflow rules need separate verification and block this helper. It neither changes PR state nor merges; approval, authorization, queue state, base interactions, and the final pinned merge remain the owner's responsibility. A pass is a snapshot, not protection against a later push.
+It prints `PASS` or the failed conditions: head mismatch, closed/draft PR, auto-merge enabled for a ready finish, merge conflicts, unknown mergeability, GitHub `CHANGES_REQUESTED`, or required checks not passing. Both PR snapshots must report `MERGEABLE`; `UNKNOWN` blocks with a request to check again after calculation, without an internal retry loop. Missing or invalid state fields fail closed.
+
+It reads classic branch protection and active branch rules to catch required checks that never reported, then queries their current results. The token must be able to read those policies. Use repeatable `--require-check NAME` for additional project checks. If there are no server requirements, supply project check names or explicitly confirm a no-check policy with `--allow-no-checks`. GitHub's explicit response that the plan does not offer protection counts as no server policy; it still requires an explicit project policy. Permission errors, other query failures, and missing evidence fail closed. Required-workflow rules need separate verification and block this helper.
+
+It neither changes PR state nor merges. `reviewDecision` is only an extra veto: an empty value, `APPROVED`, or `REVIEW_REQUIRED` does not establish independent review or satisfy required approvals. Review acceptance, required GitHub approvals, authorization, queue state, base interactions, and the final pinned merge remain the owner's responsibility. A pass is a snapshot, not protection against later head, base, or review changes.
 
 Tests use the Python standard library:
 

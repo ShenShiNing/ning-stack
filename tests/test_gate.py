@@ -31,12 +31,13 @@ sys.exit(answer["code"])
 """
 
 
-def view(head=HEAD, state="OPEN", draft=False, auto=None):
+def view(head=HEAD, state="OPEN", draft=False, auto=None, mergeable="MERGEABLE", review=None):
     return {
         "match": "pr view",
         "code": 0,
         "stdout": json.dumps(
-            {"headRefOid": head, "state": state, "isDraft": draft, "autoMergeRequest": auto, "baseRefName": "main"}
+            {"headRefOid": head, "state": state, "isDraft": draft, "autoMergeRequest": auto,
+             "baseRefName": "main", "mergeable": mergeable, "reviewDecision": review}
         ),
         "stderr": "",
     }
@@ -120,6 +121,40 @@ class Gate(unittest.TestCase):
         calls = self.passes([view(), required([row("build")]), view()])
         for call in calls:
             self.assertRegex(call, r"^(pr (view|checks) |api --method GET )")
+
+    def test_conflict_or_unknown_mergeability_blocks_either_snapshot(self):
+        for state in ("CONFLICTING", "UNKNOWN"):
+            for index in (0, 1):
+                with self.subTest(state=state, snapshot=index):
+                    views = [view(), view()]
+                    views[index] = view(mergeable=state)
+                    self.fails([views[0], required([row("build")]), views[1]], state)
+
+    def test_changes_requested_blocks_either_snapshot(self):
+        for index in (0, 1):
+            with self.subTest(snapshot=index):
+                views = [view(), view()]
+                views[index] = view(review="CHANGES_REQUESTED")
+                self.fails([views[0], required([row("build")]), views[1]], "CHANGES_REQUESTED")
+
+    def test_review_summary_does_not_replace_callers_review_decision(self):
+        for review in (None, "", "APPROVED", "REVIEW_REQUIRED"):
+            with self.subTest(review=review):
+                self.passes([view(review=review), required([row("build")]), view(review=review)])
+
+    def test_missing_or_invalid_gate_states_fail_closed(self):
+        for field, values in (("mergeable", (None, "OTHER", [])),
+                              ("reviewDecision", (False, "OTHER", {}))):
+            for invalid in (*values, "missing"):
+                with self.subTest(field=field, invalid=invalid):
+                    answer = view()
+                    body = json.loads(answer["stdout"])
+                    if invalid == "missing":
+                        del body[field]
+                    else:
+                        body[field] = invalid
+                    answer["stdout"] = json.dumps(body)
+                    self.fails([answer, required([row("build")]), view()], field)
 
     def test_never_reported_classic_requirement_cannot_pass(self):
         self.fails([view(), required([row("build")]), view()], "never-reported",

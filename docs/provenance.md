@@ -80,3 +80,5 @@ The entrypoint, delivery, evidence, and review methods consolidate repeated rule
 ## Portable methods and executable checks
 
 Design, continuity, and investigation now use compact decision criteria instead of fixed report structures, hypothesis counts, or repeated transition instructions. Trails remain conditional; inherited proof is reused only when its assumptions hold. T3-specific PR registration, delegation calls, and preview instructions belong to the project or harness rather than the portable methods. The GitHub gate helper checks observable remote state; it does not establish review quality, acceptance, or authorization.
+
+Further local adaptations: the helper rejects conflicts, uncalculated mergeability, and GitHub change requests in both snapshots. Review remains mandatory for semantic instruction and procedure changes; meaning-preserving spelling, formatting, and link repairs may skip it only when project/user rules permit. Cleanup reuses an agreed maintenance baseline, and delivery closeout routes debt, changed premises, and process friction back to cleanup, optimization, and learning without authorizing extra work.

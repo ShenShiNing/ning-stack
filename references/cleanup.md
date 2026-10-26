@@ -8,6 +8,8 @@ Contents: Scope · Standards · Find candidates · Evidence per class · Decide 
 
 Take the area the user names. Otherwise pick hotspots: walk a good stretch of `git log` for files and directories that keep changing, and weight recent churn, because cleanup pays back where the next changes land. State the scope and a budget (number of candidates or PRs) before scanning.
 
+For recurring maintenance, agree on the cadence, scope, budget, and permission to report, publish issues, or change code. Without that authorization, produce a read-only report and create no schedule. Reuse the previous findings and inspect changes since that baseline rather than restarting a whole-repository audit. A challenged architectural premise goes to optimization; it is not a cleanup deletion.
+
 ## Standards
 
 Cleanup measures against written, current standards, never taste. Collect them first and cite them per finding:

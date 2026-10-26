@@ -2,6 +2,10 @@
 
 One independent reviewer per round, fresh and read-only, on the user/project model (another family when available). No edits, commits, pushes, comments, or subagents. Each round starts a new reviewer task rather than messaging a previous reviewer.
 
+## Scope
+
+Size review to semantic risk. Meaning-preserving prose repairs (spelling, formatting, and links) may skip independent review unless the user or project requires it; report the exemption and scoped checks. Instructions, skills, contracts, and operating procedures that change decisions or behavior still require review, even in Markdown. A small semantic change needs one focused review, not a panel or a required number of rounds.
+
 ## Standard round
 
 Give the reviewer the repo, base and head SHAs, intent, acceptance, scope exclusions, risk class, applicable standards, existing proof, and CI state. It reads the diff and surrounding callers and reports:
