@@ -1,40 +1,42 @@
 ---
 name: ning-stack
-description: Ning's engineering workflow for designing new capabilities, delivering code changes to a local, ready-PR or merged finish line, cleaning up debt (dead code, comments, excess tests), and reassessing architecture. Use when building or fixing something end to end, specifying work, driving or taking over a PR, running a cleanup, reviewing architecture, or resuming paused work.
+description: Ning's engineering workflow for design, end-to-end delivery, debt cleanup, and architecture reassessment. Use when specifying or shipping work, driving a PR, cleaning a codebase, reviewing its architecture, or resuming a task.
 ---
 
 # ning-stack
 
-Build complex things as simply as possible. Every outcome has one **owner**, every claim has **evidence**, review is independent, and a step stays on the critical path only while it reduces a real risk.
+Build complex things as simply as possible. One owner carries each outcome; independent review and evidence earn the finish.
 
 ## Project rules
 
-Read the project's always-loaded instructions (`AGENTS.md`, `CLAUDE.md`) and the docs they point to for product and environment constraints: checkout and data safety, design authority, architecture rules, check commands, CI and merge conventions, model roles. This stack supplies the methods; the project supplies those facts.
+Read the project's `AGENTS.md` / `CLAUDE.md` and the references relevant to this task. They supply product constraints, design authority, architecture, safe environments, commands, model roles, and merge policy.
 
-Precedence, highest first: harness and tool rules, the user's explicit instruction for this task, the project's rules, this stack. When a project rule conflicts with a step here, follow the rule and say which one governed. A project may add a short `ning-stack` section with preferences (default finish line, reviewer model, focused and broad check commands); without one, use the defaults here.
+Apply harness and tool rules, then the user's task instructions, then project rules, then this stack. Identify a conflict when it changes the route. Existing authorization carries forward; this skill grants none. Optional project preferences belong in a short `ning-stack` section of `AGENTS.md`.
 
 ## Route
 
+Read the matching flow and follow its conditional pointers; other methods stay unloaded.
+
 | Request | Read |
 | --- | --- |
-| A question: how, why, should we, can X do Y | [methods/investigation.md](references/methods/investigation.md). Answer read-only; offer a change instead of making it. |
-| A new capability, or behavior nobody has decided yet | [design.md](references/design.md) |
-| A change to ship: feature, bug, refactor, PR work, takeover, rebase of an old PR | [delivery.md](references/delivery.md) |
-| Remove debt: dead code, stale comments, redundant tests, sediment docs | [cleanup.md](references/cleanup.md) |
-| Reassess logical or physical architecture | [optimization.md](references/optimization.md) |
-| Resume, pause, hand off, run long and unattended, or work a backlog | [methods/continuity.md](references/methods/continuity.md) |
-| Repeated corrections, workflow friction, stage timing | [methods/learning.md](references/methods/learning.md) |
+| Explain or investigate a question | [Investigation](references/methods/investigation.md); answer read-only |
+| Decide a new capability's behavior | [Design](references/design.md) |
+| Ship a feature, fix, refactor, or PR | [Delivery](references/delivery.md) |
+| Remove dead code, stale comments, excess tests, or other debt | [Cleanup](references/cleanup.md) |
+| Reassess logical or physical architecture | [Optimization](references/optimization.md) |
+| Resume, pause, hand off, take over, or work unattended | [Continuity](references/methods/continuity.md) |
+| Diagnose workflow friction or measure delivery | [Learning](references/methods/learning.md) |
 
-Read only the row that matches. Flows chain: design ends in a brief that delivery consumes, and cleanup and optimization ship through delivery. Each flow file names the method files it needs and when.
+Design produces the brief delivery consumes. Cleanup and optimization ship through delivery.
 
-## Shared rules
+## Shared decisions
 
-- **Facts are the agent's, decisions are the user's.** Look up anything observable. Settle an empirical fork by running or sketching it. Put consequential product, ownership and irreversible choices to the user once, with a recommendation. Decide reversible technical details yourself and list them in the report. A settled decision or an agreed seam stays settled.
-- **Permissions come from the user or the project.** This stack grants none by itself. Publishing issues, posting comments, pushing, merging, deploying, installing and messaging each need the user's request, a standing project or user authorization, or a finish-line grant (`full send`, `full stop`, see delivery). An action already covered by one of those needs no second confirmation.
-- **Prove on the real artifact.** Command output, a reproduction, a capture. Label every claim measured, inferred or guess in the sentence that makes it. Never hand the user a check you could run.
-- **No is an acceptable answer.** When scope, an abstraction, a test or a review finding does not earn its place, say so with the reason.
-- **Report** the finish-line state, the evidence, the decisions made on the user's behalf, and what remains unverified.
+- Look up facts yourself. Bring consequential product, ownership, and irreversible choices to the user together, with a recommendation. Decide reversible details yourself. Reuse settled decisions and seams.
+- Show proof from the real artifact; distinguish observation from inference and uncertainty.
+- A step, test, comment, abstraction, or option must address a current risk or reduce existing complexity. Decline work that does neither.
+- Use existing progress notes, commits, check output, and PRs as records. Create a separate spec, checklist, ledger, or trail only when its flow needs one.
+- Report the finish-line state, evidence, consequential decisions, and remaining gaps.
 
 ## Sources
 
-Methods are adapted from Matt Pocock's skills, pstack, and tstack. [references/provenance.md](references/provenance.md) maps each source to what was kept and where; read it only when updating the stack or asked about sources.
+Adapted from Matt Pocock's skills, Lauren Tan's pstack, and Theo Browne's tstack. Read the [source map](docs/provenance.md) only when updating the stack or checking attribution.

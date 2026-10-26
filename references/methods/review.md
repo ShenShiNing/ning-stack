@@ -1,85 +1,48 @@
 # Review
 
-Independent review that finds real defects in the intended case and fights scope growth. One reviewer per round by default; heavier panels only when their trigger holds.
-
-Contents: Standard round · Brief · Answering findings · Budget and stop · Interrogate · Council · Posting on a PR.
+One independent reviewer per round, fresh and read-only, on the user/project model (another family when available). No edits, commits, pushes, comments, or subagents. In T3 each round is a new `delegate_task`, never a message to a previous reviewer.
 
 ## Standard round
 
-Used by delivery Stage 4 and every later round.
-
-- The reviewer runs on the reviewer model the user or project names (a different model family from the implementer when available), as a fresh task each round, read-only: no edits, commits, pushes, PR comments or subagents. In T3 that is a new `delegate_task` per round; never a message to an earlier review thread.
-- It reads the diff from the merge-base to the pinned head SHA, the surrounding code, and the brief. It covers two axes in separate sections, so one cannot mask the other:
-  - **Spec**: what acceptance asked for that is missing, partial or wrong; behavior nobody asked for.
-  - **Standards**: violations of the project's documented standards (cite the rule), plus the smell baseline as labelled judgement calls. A documented project standard overrides the baseline. Skip what tooling enforces.
-- Smell baseline: mysterious name, duplicated code, feature envy, data clumps, primitive obsession, repeated switches, shotgun surgery, divergent change, speculative generality, message chains, middle man, refused bequest.
-
-## Brief
-
-Children get no history, so the brief stands alone:
+Give the reviewer the repo, base and head SHAs, intent, acceptance, scope exclusions, risk class, applicable standards, existing proof, and CI state. It reads the diff and surrounding callers and reports:
 
 ```
-Review only. Do not edit, commit, push, comment on the PR, or start subagents.
-Repo: <path or URL>  Base: <merge-base sha>  Head: <head sha>
-Intent: <one or two sentences>  Out of scope: <list>
-Acceptance: <predicate>  Risk class: <R0|R1|R2>
-Standards: <the project's standards files>
-Proof so far: <commands and results>  CI: <state at launch>
-Read: git diff <base>..<head> and surrounding code.
-Find bugs, broken callers and mismatches with intent. Flag code, tests or guards the intent does not need.
-Severity by impact on valid behavior and invariants, not by frequency: blocker = the intended case is wrong, or any reachable path can break authorization, security, data integrity, concurrency or resource safety; should = a real bug valid callers can hit; nit = style, speculative hardening, unneeded compatibility, small cost.
-Reply:
 VERDICT: APPROVE or CHANGES
 ## Spec
-S1 [blocker|should|nit] <file>:<line> <claim>. Fix: <suggestion>
+S1 [blocker|should|nit] file:line — missing, incorrect, or unrequested behavior; suggested fix.
 ## Standards
-T1 [blocker|should|nit] <file>:<line> <rule or smell>. Fix: <suggestion>
+T1 [blocker|should|nit] file:line — violated rule or labelled design judgement; suggested fix.
 ```
 
-Later rounds add the ledger and the change since the last round, and ask for open ids and changed code only, each old id marked `resolved` or `still open: <reason>`.
+Standards include correctness and the project's documented rules. Skip what tooling already enforces. Look for unnecessary tests, comments, compatibility, guards, and abstraction; assess names, duplication, coupling, scattered ownership, and shallow pass-through modules against current needs.
 
-## Answering findings
+Severity follows impact on valid behavior, not frequency: **blocker** breaks the intended case or reachable security, authorization, data integrity, concurrency, or resource safety; **should** is a real bug valid callers can hit; **nit** is style, speculative hardening, or minor cost.
 
-The slice owner checks each finding and its severity against the source. Severity follows impact: a rare path that breaks authorization, data, concurrency or resource safety still blocks; a cosmetic or speculative concern is a nit whatever its label. Scope stays fixed: a real risk outside the intent becomes a named follow-up, not silence.
+## Findings and stop
 
-- **Agree**: smallest fix; prefer deleting or narrowing over a new lock, cache, helper or option. One focused failing-then-passing test if the intent needs it.
-- **Disagree**: the reason with evidence (`file:line`, test, output).
-- **Decline**: out of scope or nit, one line, listed as a follow-up.
+The slice owner verifies every finding. Agree and make the smallest fix, disagree with evidence, or decline a nit or unrelated scope with a reason. Preserve a row per finding (id, severity, outcome, evidence); create no empty ledger. An unresolved older finding survives a new push. Report a real out-of-scope risk as a follow-up.
 
-Keep a ledger row per finding: id, severity, outcome, evidence. Never agree just to end the loop. Review bots and the project's agentic reviewers get the same treatment: they catch real bugs and also file noise.
+A new round gets the ledger, responses, changed hunks, and any new base interaction; review only open findings and behavior the previous verdict did not cover. Mark old ids resolved or still open with reasons. Comment and format edits alone need no new round.
 
-## Budget and stop
-
-- Three rounds by default. Up to five for security, permissions, auth, data loss or state and concurrency while a blocker or should stays open with evidence, or when the user asks.
-- Stop early when a round returns only nits.
-- **Agreed**: APPROVE on the current behavior diff, nothing open at blocker or should, no concern of the owner's own.
-- **Stuck**: a finding disputed after two exchanges, or budget spent. Show both sides in two or three lines each; the user decides. Budget end is not approval.
-- A timeout, an error or no reply is not approval. Cancel, confirm it stopped, and start a fresh round with the ledger.
+Stop on an approval covering the current behavior with no unresolved blocker or should; nits alone do not require another round. Three rounds is a ceiling, not a target. Up to five for concrete security, auth, data-loss, concurrency, or state risks while a real finding remains, or on request. After two unresolved exchanges or the budget, present the disagreement for the user's decision. Exhaustion, errors, timeouts, and silence are not approval; cancel a failed run before replacing it with a fresh task.
 
 ## Interrogate
 
-For a contested design or a high-cost change before shipping, when reviewers on at least two model families are available.
-
-1. Write the intent in one paragraph. If intent is unclear, ask the user first.
-2. Give each reviewer the same brief, diff or sketch, and context, in parallel, read-only. Diversity comes from different model families, not assigned personas.
-3. Merge findings that describe the same issue, noting which reviewers raised each. Independent agreement is the strongest signal.
-4. Judge as the lead, not an aggregator. Each finding goes to **Act on** (blocks a real PR), **Consider** (legitimate, cost unclear, the user's call), **Noted** (valid, not actionable now) or **Dismissed** (wrong or missing context, with the reason). Close with an agreement map.
-
-Deliver the verdict; do not auto-apply.
+Use for a contested design or high-cost change when two model families are available. Send the same intent, diff or sketch, and constraints to independent read-only reviewers. Merge duplicates, note agreement, and judge each finding: act, consider with the user, note for later, or dismiss with evidence. Present the verdict; do not auto-apply a panel's proposals.
 
 ## Council
 
-Only when the user says `council` or has designated it for a decision class. Three delegates, one strong model from each of three providers (the user's named members first), read-only, with the request and context. If three providers are not reachable, or a named member is unavailable, report it instead of substituting. For a code review ask each for a score out of 10 and record `no score` when none is given. Summarize useful findings, disagreements and next steps; a fresh review after fixes is a new round. Keep scope fixed across rounds. If the work has a PR, put the per-round score table in the PR description, never a comment.
+Only on explicit request or a user-designated decision class. Three strong models from three providers, using named members first; report unavailable members rather than substitute. Keep scope fixed. For code reviews collect scores out of ten (or no score), useful findings, disagreements, and next steps. A fix gets a fresh round. If there is a PR, keep per-round scores in its description.
 
 ## Posting on a PR
 
-Only when the user or project authorizes posting. Every comment written on the user's behalf opens with a note callout, attribution inside, reply outside:
+Post only when authorized. Comments written for the user start with:
 
 ```md
 > [!NOTE]
-> 🤖 **<verified model name, or the harness name> responding on behalf of <user>**
+> 🤖 **<verified model or harness> responding on behalf of <user>**
 
-<conclusion first, then the cited code, check or reproduction>
+<Conclusion, evidence, and reply>
 ```
 
-Separate verified fact from judgement, check the whole comment for secrets and private details, preview the Markdown, and confirm the returned comment URL. Resolve a thread only after its reply posted. PR descriptions and commit messages take no callout.
+Check facts, private details, and rendered Markdown; confirm the returned URL before resolving a thread. Descriptions and commit messages need no callout.
