@@ -4,7 +4,7 @@
   gate.py --repo OWNER/REPO --pr NUMBER --head FULL_SHA --finish ready|merged
           [--require-check NAME ...] [--allow-no-checks]
 
-Prints PASS and exits 0, or prints each failed condition and exits 1. It never
+Prints a scoped PASS and exits 0, or prints each failed condition and exits 1. It never
 changes remote state and never retries. The result is a snapshot: the final
 merge must still pin the head, and review acceptance, authorization and queue decisions
 stay with the caller. Required checks are GitHub's required-check policy plus
@@ -212,7 +212,11 @@ def main() -> int:
     if problems:
         print("\n".join(f"FAIL: {problem}" for problem in problems))
         return 1
-    print("PASS")
+    print("PASS: remote state checks only")
+    print("Checked: head, open/non-draft state, mergeability, change-request veto, check policy/results"
+          + (", auto-merge off" if args.finish == "ready" else ""))
+    print("Owner must verify: independent review, required human approvals, unresolved findings, "
+          "authorization, queue state, base interactions, final pinned merge.")
     return 0
 
 

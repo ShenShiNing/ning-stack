@@ -108,7 +108,7 @@ class Gate(unittest.TestCase):
     def passes(self, answers, *extra, **kw):
         result, calls = self.gate(answers, *extra, **kw)
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
-        self.assertEqual(result.stdout.strip(), "PASS")
+        self.assertEqual(result.stdout.splitlines()[0], "PASS: remote state checks only")
         return calls
 
     def fails(self, answers, expect, *extra, **kw):
@@ -140,7 +140,14 @@ class Gate(unittest.TestCase):
     def test_review_summary_does_not_replace_callers_review_decision(self):
         for review in (None, "", "APPROVED", "REVIEW_REQUIRED"):
             with self.subTest(review=review):
-                self.passes([view(review=review), required([row("build")]), view(review=review)])
+                result, _ = self.gate([view(review=review), required([row("build")]), view(review=review)])
+                self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+                self.assertEqual(result.stdout.splitlines()[0], "PASS: remote state checks only")
+                self.assertIn("Checked:", result.stdout)
+                outstanding = result.stdout.split("Owner must verify:", 1)[1]
+                for condition in ("independent review", "required human approvals", "unresolved findings",
+                                  "authorization", "queue state", "base interactions", "final pinned merge"):
+                    self.assertIn(condition, outstanding)
 
     def test_missing_or_invalid_gate_states_fail_closed(self):
         for field, values in (("mergeable", (None, "OTHER", [])),

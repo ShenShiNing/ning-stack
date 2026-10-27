@@ -8,17 +8,19 @@ Size review to semantic risk. Meaning-preserving prose repairs (spelling, format
 
 ## Standard round
 
-Give the reviewer the repo, base and head SHAs, intent, acceptance, scope exclusions, risk class, applicable standards, existing proof, and CI state. It reads the diff and surrounding callers and reports:
+Give the reviewer the repo, base and head SHAs, intent, acceptance, scope exclusions, risk class, applicable standards, existing proof, and CI state. Read the project's existing `REVIEW.md` and any review guidance linked for the affected paths; these refine the review within the project's instruction hierarchy. Create no review-policy file just to run a review. The reviewer reads the diff and surrounding callers and reports:
 
 ```
 VERDICT: APPROVE or CHANGES
 ## Spec
-S1 [blocker|should|nit] file:line — missing, incorrect, or unrequested behavior; suggested fix.
+S1 [blocker|should|nit] [introduced|pre-existing|newly reachable] file:line — trigger, impact, evidence; suggested fix.
 ## Standards
-T1 [blocker|should|nit] file:line — violated rule or labelled design judgement; suggested fix.
+T1 [blocker|should|nit] [introduced|pre-existing|newly reachable] file:line — trigger, impact, evidence; violated rule or labelled design judgement; suggested fix.
 ```
 
-Standards include correctness and the project's documented rules. Skip what tooling already enforces. Look for unnecessary tests, comments, compatibility, guards, and abstraction; assess names, duplication, coupling, scattered ownership, and shallow pass-through modules against current needs.
+Every finding names a concrete trigger and consequence, supported by a source path, violated constraint, or executable reproduction. Mark a pre-existing defect made reachable or more harmful by this change as newly reachable and explain the interaction. Group the same failure class across affected locations in one finding so the owner can fix it together. Report unrelated pre-existing defects as follow-ups rather than attributing them to the patch.
+
+Standards include correctness and the project's documented rules. Skip what tooling already enforces and omit pure style preferences unless requested; label design judgements and show their concrete cost or violated constraint. Look for unnecessary tests, comments, compatibility, guards, and abstraction; assess names, duplication, coupling, scattered ownership, and shallow pass-through modules against current needs. State the finding count and say plainly when there is nothing to fix; zero findings is a valid result.
 
 Severity follows impact on valid behavior, not frequency: **blocker** breaks the intended case or reachable security, authorization, data integrity, concurrency, or resource safety; **should** is a real bug valid callers can hit; **nit** is style, speculative hardening, or minor cost.
 

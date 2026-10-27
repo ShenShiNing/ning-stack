@@ -19,6 +19,8 @@ State acceptance, finish line, and risk in the existing progress note. A small t
 
 Classify instructions and operational documents by what consuming them changes, not their extension. Escalate when impact grows. Project gates still apply; a scheduled full run never substitutes for required pre-merge proof.
 
+For R2 or changes to releases, persisted data, or access controls, include recovery in the existing frame: the signal that reveals a regression, how to stop its impact or recover, and any data or external effects left after a code revert. Prove the recovery mechanism in a safe environment where feasible; otherwise name the unverified part. Irreversible steps and recovery actions retain their own authorization requirements.
+
 ## Stage 1: Ground
 
 Use the harness-owned isolated checkout from the freshly fetched default branch. Preserve the user's primary checkout and unrelated work. Read the owner and callers; reuse an agreed brief's grounding. A bug needs a failing reproduction before a fix. Use [Investigation](methods/investigation.md) for a hard bug, unfamiliar subsystem, or decision whose rationale must be revisited.
@@ -35,7 +37,7 @@ Run the framed proof. Stop when acceptance and relevant risks are covered. Keep 
 
 Commit coherent changes. For `local`, apply the review policy below to the local committed diff, fix real findings, and report without pushing or requiring remote CI.
 
-Otherwise check for an existing PR, push, and open one ready PR. Follow the project's title/body convention: problem, change, evidence, model and harness; scan for private details. Follow the project's PR registration and supervision rules. A child's last line reports PR URL, head, checks, and review state.
+Otherwise check for an existing PR, push, and open one ready PR. Follow the project's title/body convention: problem, change, evidence, model and harness; carry any framed recovery guidance into the body and scan for private details. Follow the project's PR registration and supervision rules. A child's last line reports PR URL, head, checks, and review state.
 
 ## Stage 4: Review and CI together
 
