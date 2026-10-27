@@ -100,7 +100,7 @@ Keep project-specific constraints and operating procedures in the project.
 python3 scripts/gate.py --repo OWNER/REPO --pr 123 --head FULL_SHA --finish ready
 ```
 
-It prints `PASS` or the failed conditions: head mismatch, closed/draft PR, auto-merge enabled for a ready finish, merge conflicts, unknown mergeability, GitHub `CHANGES_REQUESTED`, or required checks not passing. Both PR snapshots must report `MERGEABLE`; `UNKNOWN` blocks with a request to check again after calculation, without an internal retry loop. Missing or invalid state fields fail closed.
+It prints `PASS: remote state checks only`, lists the checked conditions and the remaining owner checks, or reports the failed conditions: head mismatch, closed/draft PR, auto-merge enabled for a ready finish, merge conflicts, unknown mergeability, GitHub `CHANGES_REQUESTED`, or required checks not passing. Both PR snapshots must report `MERGEABLE`; `UNKNOWN` blocks with a request to check again after calculation, without an internal retry loop. Missing or invalid state fields fail closed.
 
 It reads classic branch protection and active branch rules to catch required checks that never reported, then queries their current results. The token must be able to read those policies. Use repeatable `--require-check NAME` for additional project checks. If there are no server requirements, supply project check names or explicitly confirm a no-check policy with `--allow-no-checks`. GitHub's explicit response that the plan does not offer protection counts as no server policy; it still requires an explicit project policy. Permission errors, other query failures, and missing evidence fail closed. Required-workflow rules need separate verification and block this helper.
 
