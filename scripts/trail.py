@@ -102,10 +102,20 @@ def append(path: Path, run: str, event: str, fields: list[str], at: str | None) 
         phase, decision, why, evidence, result = fields
     row = [ts.isoformat(timespec="seconds"), run, event, span, phase, decision, why, evidence, result]
     row = [row[0]] + [clean(cell) for cell in row[1:]]
-    replay(read(path) + [dict(zip(HEADER, row))])
-    with path.open("a", newline="", encoding="utf-8") as f:
+    with path.open("a+", newline="", encoding="utf-8") as f:
+        f.seek(0)
+        if sys.platform == "win32":
+            import msvcrt
+            msvcrt.locking(f.fileno(), msvcrt.LK_LOCK, 1)
+        else:
+            import fcntl
+            fcntl.flock(f.fileno(), fcntl.LOCK_EX)
+        # Closing this handle flushes the append before releasing its lock.
+        rows = list(csv.DictReader(f, delimiter="\t"))
+        replay(rows + [dict(zip(HEADER, row))])
+        f.seek(0, 2)
         writer = csv.writer(f, delimiter="\t", lineterminator="\n")
-        if not path.exists() or path.stat().st_size == 0:
+        if f.tell() == 0:
             writer.writerow(HEADER)
         writer.writerow(row)
 
@@ -134,15 +144,16 @@ def report(path: Path) -> int:
     if incomplete:
         raise TrailError("incomplete: " + "; ".join(incomplete))
     phases: dict[str, float] = {}
-    elapsed_all = wall_all = 0.0
     for run_id, run in runs.items():
         elapsed = (run["end"] - run["start"]).total_seconds() / 60
         wall = union_minutes([(start, end) for start, end, _ in run["spans"]])
-        elapsed_all += elapsed
-        wall_all += wall
         print(f"run {run_id}: elapsed {elapsed:.1f} min, active wall {wall:.1f} min")
         for start, end, phase in run["spans"]:
             phases[phase] = phases.get(phase, 0.0) + (end - start).total_seconds() / 60
+    elapsed_all = union_minutes([(run["start"], run["end"]) for run in runs.values()])
+    wall_all = union_minutes([
+        (start, end) for run in runs.values() for start, end, _ in run["spans"]
+    ])
     print(f"all runs: elapsed {elapsed_all:.1f} min, active wall {wall_all:.1f} min")
     print("phase totals (spans overlap; these do not sum to wall time):")
     for phase, minutes in sorted(phases.items(), key=lambda item: -item[1]):
@@ -166,7 +177,7 @@ def main(argv: list[str]) -> int:
         if args and args[0] in ARITY and len(args) == 2 + ARITY[args[0]]:
             append(Path(args[1]), args[2], args[0], args[3:], at)
             return 0
-    except TrailError as error:
+    except (TrailError, OSError) as error:
         print(f"trail: {error}", file=sys.stderr)
         return 1
     print(__doc__.strip(), file=sys.stderr)

@@ -10,19 +10,23 @@ Log consequential forks, verified units, pivots/reverts, and blockers, not every
 
 ## Long or unattended run
 
-State acceptance, scope, and independently verifiable units once. Start with the riskiest unknown and use a baseline when claiming an improvement. Verify each unit, keep or revert it, and record why. Split only across real seams. Finish by checking the whole outcome, listing verified and open items, and linking the trail.
+Keep whole-goal acceptance and a task graph in existing durable records: verifiable units, blocking edges, claims/worker handles, and evidence pointers. Reuse harness task state; a ready unit is unblocked and unclaimed. Start with the riskiest unknown; use baselines for improvement claims.
 
-Continue until the finish line or a real blocker. Follow harness completion events and required turn-ending behavior; use no polling helpers.
+Claim and dispatch the ready frontier within project concurrency limits using fresh workers and [Delivery's briefs](../delivery.md#stage-0-frame). Serialize conflicting writes; reuse workers only for needed live state. Communicate through artifact pointers and concise completion reports; steer only changes affecting active work.
+
+Verify artifacts before marking a unit done, update dependencies, and dispatch newly ready work. Recover failed/stalled units from evidence. Account for in-flight work and unaccepted results before waiting or concluding; avoid status pings and interrupt-resume chains.
+
+Use supported completion/recovery wakeups within authorization and required turn-ending rules; no improvised pollers. If unavailable, report the resume trigger and recovery gap. Continue until verified whole-goal completion or explicit pause. With no ready units, wait for in-flight work or replan; report genuine blockers and link the trail.
 
 ## Pause and Handoff
 
-On an explicit pause or a required session transition, reach a safe boundary and start no new work. Stop nested work you own if pausing. Preserve task edits in a task-branch commit, labelling an incomplete tree; pause itself grants no permission to publish.
+On an explicit pause, reach a safe boundary, start no new work, and stop nested work you own before preserving task edits in a task-branch commit; label an incomplete tree. A session transition alone preserves active worker handles and the supported resume trigger without changing a live worker's checkout. Neither grants permission to publish.
 
 Leave a short note outside the repo: intent, current branch/worktree, decisions, verified/open items, next action and flow/stage, artifact pointers, and gotchas. Redact sensitive data. Report what is durable and where the next session starts.
 
 ## Pickup
 
-Read the resume note, recent decision points, and relevant source. Reconcile branch, diff, landed commits, and open findings; name the resume point. Do not repeat completed investigation. Inherited claims used at a gate must resolve to real evidence and pass [Evidence](evidence.md), Reuse on the current head/base. Route remaining work to its flow.
+Read the resume note, recent decision points, and relevant source. Reconcile branch, diff, landed commits, open findings, worker results awaiting acceptance, and next runnable units; name the resume point. Do not repeat completed investigation. Inherited claims used at a gate must resolve to real evidence and pass [Evidence](evidence.md), Reuse on the current head/base. Route remaining work to its flow.
 
 ## Takeover
 

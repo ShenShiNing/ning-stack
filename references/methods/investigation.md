@@ -4,7 +4,7 @@ Questions stay read-only. Read the method that answers the question; an investig
 
 ## How
 
-Read a narrow area yourself, explain its runtime flow, ownership, key concepts, and useful source pointers. For a broad subsystem, divide it into independent angles; delegate read-only exploration only when output would exceed your context or distinct expertise helps. Synthesize once. State an assumption when scope is vague and proceed with the smallest useful interpretation.
+Read narrow areas directly and explain runtime flow, ownership, concepts, and source pointers. For broad work, partition independent questions into bounded read-only workers under [Continuity](continuity.md#long-or-unattended-run), then synthesize once. State useful assumptions and proceed with the smallest useful scope.
 
 ## Why
 
