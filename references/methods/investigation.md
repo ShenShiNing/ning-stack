@@ -4,7 +4,7 @@ Questions stay read-only. Read the method that answers the question; an investig
 
 ## How
 
-Read narrow areas directly and explain runtime flow, ownership, concepts, and source pointers. For broad work, partition independent questions into bounded read-only workers under [Continuity](continuity.md#long-or-unattended-run), then synthesize once. State useful assumptions and proceed with the smallest useful scope.
+Read narrow areas directly and explain runtime flow, ownership, concepts, and source pointers. For broad work, use [Parallel exploration](#parallel-exploration) when independent questions benefit from delegation, then synthesize once. State useful assumptions and proceed with the smallest useful scope.
 
 ## Why
 

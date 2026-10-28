@@ -4,25 +4,15 @@ Read the section for the transition at hand. Reuse existing artifacts rather tha
 
 ## Decision trail
 
-For unattended, multi-phase, or measured work, use `scripts/trail.py` to record decisions with evidence pointers; ordinary attended work needs no trail. It writes TSV: `run-start`, `note`, and `run-end`. Timing spans use [Learning](learning.md), Timing.
+Use existing progress notes for decisions and evidence pointers. When an append-only or measured record is useful, `scripts/trail.py` writes TSV: `run-start`, `note`, and `run-end`. Timing spans use [Learning](learning.md), Timing.
 
-Log consequential forks, verified units, pivots/reverts, and blockers, not every action. Append corrections; each new session or owner starts a new run naming inherited runs. Keep logs outside the repo in the project's artifact location. Before handoff, confirm entries describe real actions and evidence resolves. A trail preserves context; it does not establish correctness by itself.
-
-## Long or unattended run
-
-Keep whole-goal acceptance and a task graph in existing durable records: verifiable units, blocking edges, claims/worker handles, and evidence pointers. Reuse harness task state; a ready unit is unblocked and unclaimed. Start with the riskiest unknown; use baselines for improvement claims.
-
-Claim and dispatch the ready frontier within project concurrency limits using fresh workers and [Delivery's briefs](../delivery.md#stage-0-frame). Serialize conflicting writes; reuse workers only for needed live state. Communicate through artifact pointers and concise completion reports; steer only changes affecting active work.
-
-Verify artifacts before marking a unit done, update dependencies, and dispatch newly ready work. Recover failed/stalled units from evidence. Account for in-flight work and unaccepted results before waiting or concluding; avoid status pings and interrupt-resume chains.
-
-Use supported completion/recovery wakeups within authorization and required turn-ending rules; no improvised pollers. If unavailable, report the resume trigger and recovery gap. Continue until verified whole-goal completion or explicit pause. With no ready units, wait for in-flight work or replan; report genuine blockers and link the trail.
+In a trail, log consequential forks, verified units, pivots/reverts, and blockers, not every action. Append corrections; each new session or owner starts a new run naming inherited runs. Keep logs outside the repo in the project's artifact location. Before handoff, confirm entries describe real actions and evidence resolves. A trail preserves context; it does not establish correctness by itself.
 
 ## Pause and Handoff
 
-On an explicit pause, reach a safe boundary, start no new work, and stop nested work you own before preserving task edits in a task-branch commit; label an incomplete tree. A session transition alone preserves active worker handles and the supported resume trigger without changing a live worker's checkout. Neither grants permission to publish.
+At a safe boundary, preserve task edits and label incomplete work. Keep active work in its current checkout.
 
-Leave a short note outside the repo: intent, current branch/worktree, decisions, verified/open items, next action and flow/stage, artifact pointers, and gotchas. Redact sensitive data. Report what is durable and where the next session starts.
+Leave a short note outside the repo: intent, branch/worktree, decisions, verified/open items, active tasks and pending results, next action and flow/stage, and artifact pointers. Redact sensitive data. Report what is durable and where the next session starts.
 
 ## Pickup
 
