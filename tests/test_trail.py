@@ -7,6 +7,45 @@ from pathlib import Path
 
 SCRIPT = Path(__file__).resolve().parent.parent / "scripts" / "trail.py"
 
+CONCURRENT_APPEND = """
+import importlib.util, sys
+spec = importlib.util.spec_from_file_location("trail", sys.argv[1])
+trail = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(trail)
+mode = sys.argv[2]
+if mode == "pause":
+    original = trail.replay
+    def replay(rows):
+        result = original(rows)
+        print("validated", flush=True)
+        sys.stdin.readline()
+        return result
+    trail.replay = replay
+elif mode == "observe":
+    if sys.platform == "win32":
+        import msvcrt
+        original = msvcrt.locking
+        def locking(fd, operation, length):
+            if operation != msvcrt.LK_UNLCK:
+                print("locking", flush=True)
+            return original(fd, operation, length)
+        msvcrt.locking = locking
+    else:
+        import fcntl
+        original = fcntl.flock
+        def flock(fd, operation):
+            if operation != fcntl.LOCK_UN:
+                print("locking", flush=True)
+            return original(fd, operation)
+        fcntl.flock = flock
+else:
+    print("ready", flush=True)
+    sys.stdin.readline()
+code = trail.main([sys.argv[1], *sys.argv[3:]])
+print("finished", flush=True)
+sys.exit(code)
+"""
+
 
 class TrailCli(unittest.TestCase):
     def setUp(self):
@@ -30,6 +69,72 @@ class TrailCli(unittest.TestCase):
 
     def at(self, minute):
         return f"2026-01-01T10:{minute:02d}:00+08:00"
+
+    def append_process(self, mode, *args):
+        process = subprocess.Popen(
+            [sys.executable, "-I", "-c", CONCURRENT_APPEND, str(SCRIPT), mode, *args],
+            stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+        )
+        self.addCleanup(self.finish_process, process)
+        return process
+
+    def finish_process(self, process):
+        if process.poll() is None:
+            process.kill()
+        process.communicate()
+
+    def test_concurrent_first_writers_keep_one_header_and_all_runs(self):
+        processes = [self.append_process(
+            "ready", "run-start", str(self.file), f"r{i}", "--at", self.at(0)
+        ) for i in range(8)]
+        for process in processes:
+            self.assertEqual(process.stdout.readline().strip(), "ready")
+        for process in processes:
+            process.stdin.write("\n")
+            process.stdin.flush()
+        for process in processes:
+            out, error = process.communicate(timeout=15)
+            self.assertEqual(process.returncode, 0, out + error)
+
+        lines = self.file.read_text().splitlines()
+        self.assertEqual(sum(line.startswith("ts\trun\tevent\t") for line in lines), 1)
+        rows = list(csv.DictReader(lines, delimiter="\t"))
+        self.assertEqual({row["run"] for row in rows}, {f"r{i}" for i in range(8)})
+        self.assertEqual(len(rows), 8)
+        for i in range(8):
+            self.ok("run-end", str(self.file), f"r{i}", "--at", self.at(1))
+        self.ok("report", str(self.file))
+
+    def test_concurrent_conflicting_events_validate_under_the_write_lock(self):
+        args = ("run-start", str(self.file), "same", "--at", self.at(0))
+        first = self.append_process("pause", *args)
+        self.assertEqual(first.stdout.readline().strip(), "validated")
+        second = self.append_process("observe", *args)
+        # An unlocked writer finishes; a locked writer announces its lock attempt.
+        self.assertIn(second.stdout.readline().strip(), ("locking", "finished"))
+        out, error = first.communicate("\n", timeout=15)
+        self.assertEqual(first.returncode, 0, out + error)
+        out, error = second.communicate(timeout=15)
+        self.assertEqual(second.returncode, 1, out + error)
+        self.assertIn("started twice", error)
+        rows = list(csv.DictReader(self.file.read_text().splitlines(), delimiter="\t"))
+        self.assertEqual(len(rows), 1)
+        self.ok("run-end", str(self.file), "same", "--at", self.at(1))
+        self.ok("report", str(self.file))
+
+    def test_overlapping_runs_union_aggregate_elapsed_and_wall_but_not_phase_totals(self):
+        for run, start, span_start, span_end, end in (("a", 0, 1, 9, 10), ("b", 5, 6, 12, 15)):
+            self.ok("run-start", str(self.file), run, "--at", self.at(start))
+            self.ok("start", str(self.file), run, "work", "write", "--at", self.at(span_start))
+            self.ok("end", str(self.file), run, "work", "--at", self.at(span_end))
+            self.ok("run-end", str(self.file), run, "--at", self.at(end))
+
+        out = self.ok("report", str(self.file))
+
+        self.assertIn("run a: elapsed 10.0 min, active wall 8.0 min", out)
+        self.assertIn("run b: elapsed 10.0 min, active wall 6.0 min", out)
+        self.assertIn("all runs: elapsed 15.0 min, active wall 11.0 min", out)
+        self.assertIn("write\t14.0 min", out)
 
     def test_overlapping_spans_report_union_wall_time_and_overlapping_phase_totals(self):
         f = str(self.file)

@@ -1,6 +1,6 @@
 # Delivery
 
-One request owner carries the finish line. One slice owner keeps a coherent change through review and CI fixes; the request owner may implement it directly. Delegate for a real need: isolation, another model or expertise, independent write sets, or context limits. Follow project model and concurrency rules. Reviewers are independent and read-only; children never launch review trees or watch PRs.
+One request owner carries the finish line. One slice owner keeps a coherent change through review and CI fixes. Focused work can stay direct; long or parallel work follows [Continuity](methods/continuity.md#long-or-unattended-run). Follow project model and concurrency rules. Reviewers are independent and read-only; children never launch review trees or watch PRs.
 
 ## Stage 0: Frame
 
@@ -23,7 +23,7 @@ For R2 or changes to releases, persisted data, or access controls, include recov
 
 ## Stage 1: Ground
 
-Use the harness-owned isolated checkout from the freshly fetched default branch. Preserve the user's primary checkout and unrelated work. Read the owner and callers; reuse an agreed brief's grounding. A bug needs a failing reproduction before a fix. Use [Investigation](methods/investigation.md) for a hard bug, unfamiliar subsystem, or decision whose rationale must be revisited.
+Reuse the task's safe checkout and intended base; obtain isolation through supported environment tools when needed. Preserve the user's primary checkout and unrelated work. Read the owner and callers; reuse an agreed brief's grounding. A bug needs a failing reproduction before a fix. Use [Investigation](methods/investigation.md) for a hard bug, unfamiliar subsystem, or decision whose rationale must be revisited.
 
 Proceed when the changed behavior, owning seam, and applicable constraints are clear.
 

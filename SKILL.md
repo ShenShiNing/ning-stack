@@ -29,7 +29,7 @@ Choose by the requested outcome. Read a method directly for a focused request; l
 | Ship a feature, fix, refactor, or PR | [Delivery](references/delivery.md) |
 | Remove dead code, stale comments, excess tests, or other debt | [Cleanup](references/cleanup.md) |
 | Reassess logical or physical architecture | [Optimization](references/optimization.md) |
-| Resume, pause, hand off, take over, or work unattended | [Continuity](references/methods/continuity.md) |
+| Coordinate long or parallel work; resume, pause, hand off, or take over | [Continuity](references/methods/continuity.md) |
 | Diagnose workflow friction or measure delivery | [Learning](references/methods/learning.md) |
 
 Design produces the brief delivery consumes. Cleanup and optimization ship through delivery.
@@ -38,6 +38,7 @@ Design produces the brief delivery consumes. Cleanup and optimization ship throu
 
 - Look up facts yourself. Bring consequential product, ownership, and irreversible choices to the user together, with a recommendation. Decide reversible details yourself. Reuse settled decisions and seams.
 - Show proof from the real artifact; distinguish observation from inference and uncertainty.
+- For long or parallel work, coordinate bounded execution subagents from the request thread; verify artifacts and retain summaries. If delegation is unavailable or forbidden, disclose it and execute directly only when permitted. Follow [Continuity](references/methods/continuity.md#long-or-unattended-run).
 - A step, test, comment, abstraction, or option must address a current risk or reduce existing complexity. Decline work that does neither.
 - Use existing progress notes, commits, check output, and PRs as records. Create a separate spec, checklist, ledger, or trail only when its flow needs one.
 - Report the finish-line state, evidence, consequential decisions, and remaining gaps.

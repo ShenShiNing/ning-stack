@@ -92,7 +92,7 @@ Keep project-specific constraints and operating procedures in the project.
 
 ## Validate
 
-`scripts/trail.py` records decision notes and explicit run/span timing. Spans can overlap. Its report distinguishes elapsed time, active wall time, and overlapping phase totals.
+`scripts/trail.py` records decisions and run/span timing. Aggregate elapsed and active wall union intervals across runs; phase totals remain cumulative and may overlap.
 
 `scripts/gate.py` is a read-only GitHub PR check using an authenticated GitHub CLI. Supply the full head SHA covered by your proof and review:
 

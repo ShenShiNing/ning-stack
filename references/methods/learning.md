@@ -34,7 +34,7 @@ Read the primary sources (the session transcript or thread, PR history, the deci
 - **Information access**: something the agent needed but could not see (logs, read-only service access).
 - **Workflow stages**: a stage that waited without reducing risk (see Timing).
 
-Present candidates by severity with evidence. Apply nothing to shared skills, instructions or global configuration without the user's approval of the specific edits.
+Present candidates by severity with evidence. Apply already-authorized edits; ask before expanding into shared skills, instructions, or global configuration outside that scope.
 
 ## Timing
 
@@ -50,7 +50,7 @@ trail.py run-end <file> <run>
 trail.py report <file>
 ```
 
-Spans may overlap, so review and CI waiting can run at once. `report` prints each run's elapsed time and **active wall** time (the union of its spans), then phase totals. Phase totals overlap and do not add up to wall time. Time between runs is never counted. Pass `--at <ISO time with offset>` to record a moment taken from task or CI metadata. Invalid order, negative spans and open runs fail loudly instead of producing a number.
+Spans may overlap. Per-run elapsed covers the run; **active wall** unions its spans. Aggregate elapsed and active wall union the corresponding intervals across runs, excluding gaps; phase totals remain cumulative and may overlap. Pass `--at <ISO time with offset>` to reuse task or CI timestamps. Invalid order, negative spans, and open runs fail loudly.
 
 | Phase | Starts | Ends |
 | --- | --- | --- |
