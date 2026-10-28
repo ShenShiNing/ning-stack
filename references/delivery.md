@@ -1,6 +1,6 @@
 # Delivery
 
-One request owner carries the finish line. One slice owner keeps a coherent change through review and CI fixes. Focused work can stay direct; long or parallel work follows [Continuity](methods/continuity.md#long-or-unattended-run). Follow project model and concurrency rules. Reviewers are independent and read-only; children never launch review trees or watch PRs.
+One owner keeps a coherent change through proof, review, and CI fixes. Reviewers are independent and read-only.
 
 ## Stage 0: Frame
 
@@ -37,7 +37,7 @@ Run the framed proof. Stop when acceptance and relevant risks are covered. Keep 
 
 Commit coherent changes. For `local`, apply the review policy below to the local committed diff, fix real findings, and report without pushing or requiring remote CI.
 
-Otherwise check for an existing PR, push, and open one ready PR. Follow the project's title/body convention: problem, change, evidence, model and harness; carry any framed recovery guidance into the body and scan for private details. Follow the project's PR registration and supervision rules. A child's last line reports PR URL, head, checks, and review state.
+Otherwise check for an existing PR, push, and open one ready PR. Follow the project's title/body convention: problem, change, evidence, model and harness; carry any framed recovery guidance into the body and scan for private details. Follow the project's PR registration requirements.
 
 ## Stage 4: Review and CI together
 
@@ -61,10 +61,8 @@ For a GitHub PR, run `scripts/gate.py --repo OWNER/REPO --pr NUMBER --head REVIE
 
 For merged, use the configured merge method with the head pinned (`--match-head-commit` or equivalent), then confirm merge. For ready, leave the PR open with auto-merge off. If a gate cannot be met, report the blocker and ask only for the decision needed; preserve the PR unmerged.
 
-## Stage 7: Close out and waiting
+## Stage 7: Close out
 
-Report acceptance, proof, review outcome, PR or local finish, and gaps. Clean up only this task's worktree and branch when safe. Unwatch before handoff. Record recurring debt for cleanup, a changed architectural premise for optimization, and observed process friction for [Learning](methods/learning.md); do not expand the delivered task into those follow-ups without authorization.
+Report acceptance, proof, review outcome, PR or local finish, and gaps. Clean up only this task's worktree and branch when safe. Record recurring debt for cleanup, a changed architectural premise for optimization, and observed process friction for [Learning](methods/learning.md); do not expand the delivered task into those follow-ups without authorization.
 
-When waiting, use harness completion events and the PR watcher, owned by the request thread. Follow instructions to end the turn after registering a watcher. Without a watcher, check only at harness-permitted decision points; otherwise report the exact pending gate. No polling loops or watcher agents.
-
-**Special entries:** read [Continuity](methods/continuity.md) for takeover, modernization, pickup, unattended work, or backlogs. For performance measurements, read Evidence, Numbers; for workflow trials, read [Learning](methods/learning.md), Timing.
+**Special entries:** read [Continuity](methods/continuity.md) for takeover, modernization, pickup, handoffs, or backlogs. For performance measurements, read Evidence, Numbers; for workflow trials, read [Learning](methods/learning.md), Timing.

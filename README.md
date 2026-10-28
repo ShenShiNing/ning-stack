@@ -1,6 +1,6 @@
 # ning-stack
 
-An engineering agent stack integrating and adapting the strengths of Matt Pocock's skills, Lauren Tan's pstack, and Theo Browne's tstack. It combines reusable engineering methods, four workflows that compose them, and small tools for observable checks. It works with Claude Code and Codex, with project and harness details supplied by adapters.
+An engineering skill combining methods from Matt Pocock's skills, Lauren Tan's pstack, and Theo Browne's tstack. Four workflows compose the methods around the requested outcome. Execution, delegation, and monitoring follow the active environment.
 
 Build complex things as simply as possible. Keep one owner accountable, agree on consequential decisions with the user, and prove the result on the real artifact.
 
@@ -11,7 +11,7 @@ Build complex things as simply as possible. Keep one owner accountable, agree on
 | Engineering methods | Investigation, diagnosis, domain and interface design, prototypes, specifications, testing, verification, review, architecture analysis, and continuity. Use them independently or together. |
 | Four workflows | Design, delivery, cleanup, and optimization compose the methods around an outcome and finish line. |
 | Executable tools | Decision and timing trails, plus a read-only GitHub PR gate. |
-| Project and harness adapters | Supply product constraints, architecture, commands, model choices, permissions, and environment-specific tool calls. |
+| Project instructions | Supply product constraints, architecture, commands, model choices, permissions, and merge requirements. |
 
 Matt's skills contribute decision clarity, deep modules, vertical slices, and behavior-focused tests. pstack contributes investigation, design exploration, blast-radius analysis, and structural correction. tstack contributes delivery finish lines, bounded review, PR supervision, and continuity. The [source map](docs/provenance.md) explains the adaptations.
 
@@ -42,7 +42,7 @@ Ask the agent to use ning-stack to investigate a decision, prototype a state mod
 - [Investigation](references/methods/investigation.md): understand behavior and rationale, diagnose difficult bugs, compare designs, and divide independent investigations.
 - [Review](references/methods/review.md): Spec and Standards assessments, findings ledgers, and bounded review rounds. Cross-model interrogation and council are available for consequential disputes or explicit requests.
 - [Evidence](references/methods/evidence.md): proof by risk, test quality, blast radius, evidence reuse, measurements, and reusable verification tools.
-- [Continuity](references/methods/continuity.md): decision trails, unattended work, pause and resume, handoffs, takeovers, old PRs, and backlogs.
+- [Continuity](references/methods/continuity.md): decision notes, pause and resume, handoffs, takeovers, old PRs, and backlogs.
 - [Learning](references/methods/learning.md): structural fixes for recurring mistakes, retrospectives, and stage timing.
 
 Small changes use an inline frame and existing check output. Separate specs, decomposition checklists, and decision trails are conditional; a findings ledger starts only when a finding exists. Review rounds have a ceiling, not a required count. Meaning-preserving prose repairs may skip review when user/project rules allow; semantic changes to agent instructions and operating procedures retain it. Competing designs and review panels stay conditional.
