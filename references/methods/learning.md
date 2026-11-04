@@ -80,3 +80,4 @@ Change the stack only from evidence: a pattern seen in two or more sessions, a r
 - A trivial correction (a stale fact, a sharper sentence) is a direct edit. A new section or method goes through skill-authoring practice: keep `SKILL.md` short, disclose detail by branch, prefer a leading word or a check over more prose, and remove lines that no longer change behavior.
 - Update provenance when a method is added, adapted further or dropped.
 - Never edit an installed copy in place to work around a problem mid-task; record the friction and fix the stack source.
+- For continuity changes, replay the affected [behavior cases](../../evals/continuity.json) using the [evaluation procedure](../../evals/README.md). Check decisions, not wording; document checks alone do not prove continued execution.

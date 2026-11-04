@@ -1,0 +1,9 @@
+# Continuity behavior replay
+
+Use these cases when changing continuation, ownership transfer, or waiting instructions. They are decision exercises based on session failures plus boundary controls, not executable runtime tests or agent instructions loaded during delivery.
+
+1. Pin the skill revision, case revision, model and actual settings. Give an independent evaluator the selected skill, each case's `request` and `snapshot`, and only the resources those fields name. Keep `expected` and previous evaluations hidden. Ask for each case's outcome state, next actions, retained/stopped work, and resume mechanism. Simulate decisions only; do not dispatch workers, change repositories, access services, or create subscriptions.
+2. Judge the returned decisions against every `expected` condition. Accept equivalent actions and state names. A missing consequential action, invented subscription, unauthorized action, or completion unsupported by evidence fails the case; phrasing differences do not. Report each case as PASS, FAIL, or INCONCLUSIVE with the actual decision that supports the verdict.
+3. Preserve the prompt, response, per-case judgement, revisions and settings in task evidence outside the repository. An interrupted or failed evaluator is INCONCLUSIVE. After a fix, use a fresh evaluator for the affected cases and controls. Keep earlier failures in the evidence.
+
+When claiming an improvement, evaluate both the prior and candidate revisions independently with the same cases and settings. A candidate-only pass demonstrates that exercise, not a measured improvement. These cases do not test event delivery, process cancellation, long-run attention, or a host's ability to wake a stopped model; verify those on the actual runtime before claiming unattended reliability.

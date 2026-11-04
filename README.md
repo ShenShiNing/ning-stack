@@ -42,7 +42,7 @@ Ask the agent to use ning-stack to investigate a decision, prototype a state mod
 - [Investigation](references/methods/investigation.md): understand behavior and rationale, diagnose difficult bugs, compare designs, and divide independent investigations.
 - [Review](references/methods/review.md): Spec and Standards assessments, findings ledgers, and bounded review rounds. Cross-model interrogation and council are available for consequential disputes or explicit requests.
 - [Evidence](references/methods/evidence.md): proof by risk, test quality, blast radius, evidence reuse, measurements, and reusable verification tools.
-- [Continuity](references/methods/continuity.md): decision notes, pause and resume, handoffs, takeovers, old PRs, and backlogs.
+- [Continuity](references/methods/continuity.md): multi-task continuation and acceptance, external waits, decision notes, pause and resume, ownership handoffs, takeovers, old PRs, and backlogs.
 - [Learning](references/methods/learning.md): structural fixes for recurring mistakes, retrospectives, and stage timing.
 
 Small changes use an inline frame and existing check output. Separate specs, decomposition checklists, and decision trails are conditional; a findings ledger starts only when a finding exists. Review rounds have a ceiling, not a required count. Meaning-preserving prose repairs may skip review when user/project rules allow; semantic changes to agent instructions and operating procedures retain it. Competing designs and review panels stay conditional.
@@ -113,6 +113,8 @@ python3 -m unittest discover -s tests
 ```
 
 GitHub Actions runs the same tests on pushes and pull requests.
+
+Continuity instruction changes also use the [behavior replay cases](evals/README.md). These are independent decision exercises, separate from deterministic script tests; they do not establish unattended runtime reliability.
 
 ## Measure the improvement
 

@@ -1,6 +1,6 @@
 # Delivery
 
-One owner keeps a coherent change through proof, review, and CI fixes. Reviewers are independent and read-only.
+One owner keeps a coherent change through proof, review, and CI fixes. Reviewers are independent and read-only. For multi-task work, also apply [Continuity, Continue](methods/continuity.md#continue).
 
 ## Stage 0: Frame
 
