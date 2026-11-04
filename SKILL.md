@@ -29,7 +29,7 @@ Choose by the requested outcome. Read a method directly for a focused request; l
 | Ship a feature, fix, refactor, or PR | [Delivery](references/delivery.md) |
 | Remove dead code, stale comments, excess tests, or other debt | [Cleanup](references/cleanup.md) |
 | Reassess logical or physical architecture | [Optimization](references/optimization.md) |
-| Resume, hand off, take over, or triage a backlog | [Continuity](references/methods/continuity.md) |
+| Coordinate multi-task work, resume, hand off, take over, or triage a backlog | [Continuity](references/methods/continuity.md) |
 | Diagnose workflow friction or measure delivery | [Learning](references/methods/learning.md) |
 
 Design produces the brief delivery consumes. Cleanup and optimization ship through delivery.
