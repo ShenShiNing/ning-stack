@@ -22,7 +22,7 @@ In a trail, log consequential forks, verified units, pivots/reverts, and blocker
 
 On explicit pause, start no new work and bring owned execution to a safe preserved boundary under the user's stop instructions. Preserve task edits and label incomplete work; keep active work in its current checkout.
 
-When replacing an owner, the old owner stops accepting work, preserves WIP and pending checks, and accounts for every owned writer. The successor starts writing only after old writers are confirmed stopped or explicitly transferred with a single owner. If the old owner is unavailable, verify actual task and checkout state; unresolved writer ownership remains a handoff gap. Context compaction alone preserves live worker handles and pending results, without stopping or relaunching them.
+When replacing an owner, the old owner stops accepting work, preserves WIP and pending checks, and accounts for every owned writer. The successor starts writing only after old writers are confirmed stopped or explicitly transferred with a single owner. Stopping or transferring writers retains existing authorization limits. If the old owner is unavailable, verify actual task and checkout state; unresolved writer ownership remains a handoff gap. After context compaction, verify worker state; retain live handles and pending results without stopping or relaunching active work.
 
 Leave a short note outside the repo: intent, branch/worktree, decisions, verified/open items, active tasks and pending results, next action and flow/stage, and artifact pointers. Redact sensitive data. Report what is durable and where the next session starts.
 
