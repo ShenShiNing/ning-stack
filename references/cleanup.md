@@ -18,7 +18,7 @@ Cleanup measures against written, current standards, never taste. Collect them f
 - Reference projects the project names, compared at a recorded revision.
 - Tool output the project already runs (unused-code gates, lint, typecheck, test scope tools).
 
-A standard that is itself stale or wrong is an optimization finding, not something to silently bypass.
+A standard that is itself stale or wrong is never silently bypassed: propose replacing it ([Shared decisions](../SKILL.md#shared-decisions)), or send a broad architectural premise to optimization.
 
 ## Find candidates
 
