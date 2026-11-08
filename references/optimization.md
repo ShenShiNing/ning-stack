@@ -51,7 +51,7 @@ For each candidate, decide one of:
 
 - **Keep**: the current shape earns its cost. Say why so the next review does not re-suggest it.
 - **Deepen or move**: a concrete restructure, with the benefit in locality, leverage and testability, and the migration route (prefactor, expand, migrate in batches, contract; or a hard cut where the project has no data to preserve).
-- **Revise the standard**: the principle or ADR is wrong for today. Propose a superseding ADR with the changed premise and evidence. Code that merely deviates from a sound norm is migration debt, named as such, never blessed by rewriting the norm.
+- **Revise the standard**: the principle or ADR is wrong for today. Propose a superseding ADR with the changed premise and evidence, and supersede only after the user agrees ([Shared decisions](../SKILL.md#shared-decisions)). Code that merely deviates from a sound norm is migration debt, named as such, never blessed by rewriting the norm.
 
 Rate each change `Strong`, `Worth exploring` or `Speculative`, and name one top recommendation.
 

@@ -37,6 +37,7 @@ Design produces the brief delivery consumes. Cleanup and optimization ship throu
 ## Shared decisions
 
 - Look up facts yourself. Bring consequential product, ownership, and irreversible choices to the user together, with a recommendation. Decide reversible details yourself. Reuse settled decisions and seams.
+- An ADR records a decision, not a law. When a simpler design, or one better for the architecture or another aspect, contradicts an ADR, propose replacing it rather than working around it: what it solved, why that no longer holds or what is now better, and which code and docs change. Do not change behavior the ADR requires until the user agrees. Then supersede it in one change: a new ADR, the old one marked superseded with a link, and code and docs updated. Make a hard cut without compatibility layers where project rules call for one, such as before launch.
 - Show proof from the real artifact; distinguish observation from inference and uncertainty.
 - A step, test, comment, abstraction, or option must address a current risk or reduce existing complexity. Decline work that does neither.
 - Use existing progress notes, commits, check output, and PRs as records. Create a separate spec, checklist, ledger, or trail only when its flow needs one.

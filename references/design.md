@@ -27,7 +27,7 @@ For a new or changed interface, sketch caller usage first. State ownership, data
 
 Prefer deep modules: little a caller must know, substantial behavior behind the interface. Apply the deletion test: if removing a module removes complexity, it is a pass-through; if complexity spreads across callers, it earns its place. A second real implementation or a present ownership/lifecycle need can justify an adapter; hypothetical variability cannot.
 
-Use [Competing designs](methods/investigation.md) only for contested, irreversible, or unprecedented shapes. A still-contested costly choice may warrant [Interrogate](methods/review.md). During implementation, surface consequential departures from the agreed shape. Repeated workarounds, escape hatches, or caller knowledge of internals are reasons to revisit the sketch rather than accumulate exceptions.
+Use [Competing designs](methods/investigation.md) only for contested, irreversible, or unprecedented shapes. A still-contested costly choice may warrant [Interrogate](methods/review.md). During implementation, surface consequential departures from the agreed shape. Repeated workarounds, escape hatches, or caller knowledge of internals are reasons to revisit the sketch rather than accumulate exceptions. When the ADR behind the sketch is the obstacle, propose replacing it ([Shared decisions](../SKILL.md#shared-decisions)).
 
 ## Prototype
 

@@ -31,6 +31,8 @@ Proceed when the changed behavior, owning seam, and applicable constraints are c
 
 Make the smallest change meeting acceptance. For behavior changes, use red-to-green vertical slices at an existing public seam. A test must catch a distinct current risk; pure visual changes use before/after captures. Mechanical refactors may use existing coverage when project rules permit. Read [Evidence](methods/evidence.md), Tests when writing or removing tests.
 
+If the change needs to break an ADR, or remove a check one requires, stop and propose replacing the ADR ([Shared decisions](../SKILL.md#shared-decisions)); change nothing it requires until the user agrees.
+
 Run the framed proof. Stop when acceptance and relevant risks are covered. Keep commands and results tied to the tested head and base. For reused evidence or a moving base, read Evidence, Reuse.
 
 ## Stage 3: Publish, or finish locally
